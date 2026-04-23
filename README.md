@@ -1,73 +1,72 @@
-# React + TypeScript + Vite
+# Draft to API Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Editor basado en React expuesto como `Web Component` para usarlo desde HTML normal.
 
-Currently, two official plugins are available:
+## Objetivo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- usar el editor como `<draft-to-api-editor>`
+- soportar multiples instancias
+- integrarlo en formularios con `input type="hidden"`
+- poder consumirlo desde proyectos sin React
 
-## React Compiler
+## Desarrollo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Paginas utiles en local:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `http://localhost:5173/`
+- `http://localhost:5173/web-component-test.html`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Comandos
+
+```bash
+npm run dev
+npm run build
+npm run build:web-component
+npm run lint
 ```
+
+## Uso del componente
+
+```html
+<draft-to-api-editor
+  name="body"
+  value="Texto inicial"
+  placeholder="Escribe aqui..."
+></draft-to-api-editor>
+```
+
+API publica:
+
+- atributos: `name`, `value`, `placeholder`, `disabled`, `readonly`, `required`
+- propiedades: `element.value`, `element.disabled`, `element.readOnly`
+- metodos: `focus()`, `getMarkdown()`, `setMarkdown(value)`
+- eventos: `input`, `change`, `ready`
+
+## Build distribuible
+
+```bash
+npm run build:web-component
+```
+
+Salida:
+
+- `dist/editor.js`
+- `dist/editor.css`
+
+## Pruebas manuales
+
+La pagina `web-component-test.html` sirve para validar el caso basico de uso en HTML plano:
+
+- dos campos iguales
+- escritura libre en ambos
+- submit de formulario
+- visualizacion del output enviado en pantalla
+
+## Nota
+
+La carpeta `project/` queda como sandbox/referencia. El codigo activo esta en la raiz del repo.

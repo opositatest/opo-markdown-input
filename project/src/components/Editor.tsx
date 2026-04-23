@@ -1,178 +1,127 @@
-import {
-  useCreateBlockNote,
-  SuggestionMenuController,
-  getDefaultReactSlashMenuItems,
-  DefaultReactSuggestionItem,
-} from "@blocknote/react";
-import { BlockNoteView } from "@blocknote/mantine";
-import {
-  BlockNoteSchema,
-  defaultBlockSpecs,
-} from "@blocknote/core";
-import {
-  filterSuggestionItems,
-  insertOrUpdateBlockForSlashMenu,
-} from "@blocknote/core/extensions";
-import "@blocknote/mantine/style.css";
-import { useState, useEffect, useCallback } from "react";
-import { toast } from "sonner";
-import { Share, FileText, Loader2, Check } from "lucide-react";
-import { MathBlock } from "./MathBlock";
-
-const STORAGE_KEY = "draft-to-api-content";
-
-const schema = BlockNoteSchema.create({
-  blockSpecs: {
-    ...defaultBlockSpecs,
-    math: MathBlock(),
-  },
-});
-
-const getMathSlashMenuItem = (editor: typeof schema.BlockNoteEditor): DefaultReactSuggestionItem => ({
-  title: "Fórmula Matemática",
-  onItemClick: () => {
-    insertOrUpdateBlockForSlashMenu(editor, { type: "math" } as any);
-  },
-  aliases: ["math", "latex", "katex", "formula", "ecuacion"],
-  group: "Media",
-  subtext: "Inserta una fórmula LaTeX renderizada con KaTeX",
-});
-
-const getCustomSlashMenuItems = (editor: typeof schema.BlockNoteEditor): DefaultReactSuggestionItem[] => [
-  ...getDefaultReactSlashMenuItems(editor),
-  getMathSlashMenuItem(editor),
-];
+import { FileText, RefreshCcw } from "lucide-react";
+import { FormEvent, useRef, useState } from "react";
+import type { DraftToApiEditorElement } from "@/register-web-component";
 
 export default function Editor() {
-  const [isExporting, setIsExporting] = useState(false);
-  const [exported, setExported] = useState(false);
+  const bodyRef = useRef<DraftToApiEditorElement | null>(null);
+  const summaryRef = useRef<DraftToApiEditorElement | null>(null);
+  const [submittedData, setSubmittedData] = useState<Record<string, FormDataEntryValue>>({});
 
-  const editor = useCreateBlockNote({
-    schema,
-    initialContent: getStoredContent(),
-  });
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  // Auto-save to localStorage
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const content = JSON.stringify(editor.document);
-      localStorage.setItem(STORAGE_KEY, content);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [editor]);
-
-  const handleExport = useCallback(async () => {
-    setIsExporting(true);
-
-    try {
-      const blocks = editor.document;
-      
-      // Split blocks into groups: non-math and math
-      const parts: string[] = [];
-      let nonMathBatch: typeof blocks = [];
-
-      const flushNonMath = async () => {
-        if (nonMathBatch.length > 0) {
-          const md = await editor.blocksToMarkdownLossy(nonMathBatch as any);
-          if (md.trim()) parts.push(md.trim());
-          nonMathBatch = [];
-        }
-      };
-
-      for (const block of blocks) {
-        if (block.type === "math" && block.props?.latex) {
-          await flushNonMath();
-          parts.push(`$$\n${block.props.latex}\n$$`);
-        } else {
-          nonMathBatch.push(block);
-        }
-      }
-      await flushNonMath();
-
-      const finalMarkdown = parts.join("\n\n");
-      await navigator.clipboard.writeText(finalMarkdown);
-
-      setExported(true);
-      toast.success("Markdown copiado al portapapeles", {
-        description: "Las fórmulas se exportan con delimitadores $$.",
-      });
-
-      setTimeout(() => setExported(false), 2000);
-    } catch {
-      toast.error("Error al exportar", {
-        description: "No se pudo procesar el contenido.",
-      });
-    } finally {
-      setIsExporting(false);
-    }
-  }, [editor]);
+    const formData = new FormData(event.currentTarget);
+    setSubmittedData(Object.fromEntries(formData.entries()));
+  };
 
   return (
     <div className="min-h-screen bg-canvas text-foreground antialiased">
-      {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-3 bg-background/80 backdrop-blur-md" style={{ boxShadow: "0 1px 0 rgba(0,0,0,.06)" }}>
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center" style={{ boxShadow: "var(--shadow-subtle)" }}>
-            <FileText className="w-4.5 h-4.5 text-accent-foreground" />
+      <header
+        className="sticky top-0 z-10 border-b border-border bg-background/80 px-6 py-4 backdrop-blur-md"
+      >
+        <div className="mx-auto flex max-w-5xl items-center gap-3">
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-accent-foreground"
+            style={{ boxShadow: "var(--shadow-subtle)" }}
+          >
+            <FileText className="h-5 w-5" />
           </div>
-          <span className="font-semibold tracking-tight text-foreground">Draft-to-API</span>
-        </div>
 
-        <button
-          onClick={handleExport}
-          disabled={isExporting}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
-        >
-          {isExporting ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : exported ? (
-            <Check className="w-4 h-4" />
-          ) : (
-            <Share className="w-4 h-4" />
-          )}
-          <span>{isExporting ? "Exportando..." : exported ? "Copiado" : "Exportar Markdown"}</span>
-        </button>
+          <div>
+            <h1 className="text-lg font-semibold tracking-tight">Draft-to-API Web Component</h1>
+            <p className="text-sm text-muted-foreground">
+              Demo con dos instancias, submit, reset y cambio programático de valor.
+            </p>
+          </div>
+        </div>
       </header>
 
-      {/* Editor Canvas */}
-      <main className="max-w-4xl mx-auto py-16 px-6">
-        <div
-          className="bg-card rounded-3xl p-8"
-          style={{ boxShadow: "var(--shadow-sheet)" }}
-        >
-          <BlockNoteView
-            editor={editor}
-            theme="light"
-            className="min-h-[60vh]"
-            slashMenu={false}
-          >
-            <SuggestionMenuController
-              triggerCharacter="/"
-              getItems={async (query) =>
-                filterSuggestionItems(getCustomSlashMenuItems(editor as any), query)
-              }
-            />
-          </BlockNoteView>
-        </div>
+      <main className="mx-auto grid max-w-5xl gap-8 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <section className="rounded-3xl bg-card p-6" style={{ boxShadow: "var(--shadow-sheet)" }}>
+            <div className="mb-4">
+              <h2 className="text-base font-semibold">Formulario host</h2>
+              <p className="text-sm text-muted-foreground">
+                Cada editor mantiene su propio estado y sincroniza un `hidden input` distinto.
+              </p>
+            </div>
 
-        <footer className="mt-8 flex justify-center">
-          <div className="px-4 py-1.5 bg-muted rounded-full text-[11px] font-mono text-muted-foreground uppercase tracking-widest">
-            Block-based composition • Markdown output • LaTeX math
-          </div>
-        </footer>
+            <div className="space-y-5">
+              <label className="block space-y-2">
+                <span className="text-sm font-medium">Body</span>
+                <draft-to-api-editor
+                  ref={(element) => {
+                    bodyRef.current = element;
+                  }}
+                  name="body"
+                  value={"Texto inicial del body\n\n$$\nx^2 + y^2 = z^2\n$$"}
+                  placeholder="Escribe el body..."
+                />
+              </label>
+
+              <label className="block space-y-2">
+                <span className="text-sm font-medium">Summary</span>
+                <draft-to-api-editor
+                  ref={(element) => {
+                    summaryRef.current = element;
+                  }}
+                  name="summary"
+                  value="Resumen inicial"
+                  placeholder="Escribe el resumen..."
+                />
+              </label>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button
+                type="submit"
+                className="inline-flex items-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                Submit del formulario
+              </button>
+
+              <button
+                type="reset"
+                className="inline-flex items-center rounded-full border border-border bg-background px-4 py-2 text-sm font-medium"
+              >
+                Reset del formulario
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  summaryRef.current?.setMarkdown("Resumen actualizado desde JS");
+                  summaryRef.current?.focus();
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium"
+              >
+                <RefreshCcw className="h-4 w-4" />
+                Cambio programático
+              </button>
+            </div>
+          </section>
+        </form>
+
+        <aside className="space-y-6">
+          <section className="rounded-3xl bg-card p-6" style={{ boxShadow: "var(--shadow-sheet)" }}>
+            <h2 className="text-base font-semibold">Resultado del submit</h2>
+            <pre className="mt-4 overflow-auto rounded-2xl bg-muted p-4 text-xs leading-6 text-muted-foreground">
+              {JSON.stringify(submittedData, null, 2)}
+            </pre>
+          </section>
+
+          <section className="rounded-3xl bg-card p-6" style={{ boxShadow: "var(--shadow-sheet)" }}>
+            <h2 className="text-base font-semibold">Checks del plan</h2>
+            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+              <li>Etiqueta pública: `draft-to-api-editor`</li>
+              <li>Múltiples instancias independientes</li>
+              <li>Sincronización automática a Markdown</li>
+              <li>Submit y reset de formulario</li>
+              <li>API JS con `setMarkdown()` y `focus()`</li>
+            </ul>
+          </section>
+        </aside>
       </main>
     </div>
   );
-}
-
-function getStoredContent() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    }
-  } catch {}
-
-  return undefined;
 }

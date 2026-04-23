@@ -69,6 +69,34 @@
   color: hsl(var(--foreground));
 }
 
+draft-to-api-editor {
+  display: block;
+}
+
+draft-to-api-editor[disabled] {
+  opacity: 0.72;
+}
+
+.draft-to-api-editor__field {
+  border: 1px solid hsl(var(--border));
+  border-radius: 1.5rem;
+  background: hsl(var(--card));
+  overflow: hidden;
+}
+
+.draft-to-api-editor__field[data-readonly="true"] {
+  background: hsl(var(--muted));
+}
+
+.draft-to-api-editor__field .bn-container {
+  background: transparent;
+}
+
+.draft-to-api-editor__field .bn-editor {
+  padding: 1.25rem;
+  min-height: 280px;
+}
+
 .bn-container .bn-editor .bn-block-content[data-content-type="heading"] {
   letter-spacing: -0.025em;
 }

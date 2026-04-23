@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Component Test</title>
+  </head>
+  <body>
+    <div class="test-page">
+      <header class="test-header">
+        <p class="eyebrow">Plain HTML Host</p>
+        <h1>Prueba del Web Component</h1>
+        <p class="lede">
+          Dos campos iguales para escribir libremente y un boton para ver el payload enviado.
+        </p>
+      </header>
+
+      <main class="test-layout single-column-layout">
+        <section class="panel test-panel">
+          <form id="editor-test-form" class="html-form simple-form">
+            <label class="field-group">
+              <span>Campo 1</span>
+              <draft-to-api-editor
+                id="editor-first"
+                name="fieldOne"
+                placeholder="Escribe lo que quieras..."
+              ></draft-to-api-editor>
+            </label>
+
+            <label class="field-group">
+              <span>Campo 2</span>
+              <draft-to-api-editor
+                id="editor-second"
+                name="fieldTwo"
+                placeholder="Escribe lo que quieras..."
+              ></draft-to-api-editor>
+            </label>
+
+            <div class="action-row">
+              <button id="submit-form" type="submit">Mostrar output</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel compact-panel output-panel">
+          <h2>Output</h2>
+          <pre id="form-payload">{}</pre>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/src/web-component-test.ts"></script>
+  </body>
+</html>
