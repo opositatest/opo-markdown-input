@@ -66,7 +66,3 @@ La pagina `web-component-test.html` sirve para validar el caso basico de uso en 
 - escritura libre en ambos
 - submit de formulario
 - visualizacion del output enviado en pantalla
-
-## Nota
-
-La carpeta `project/` queda como sandbox/referencia. El codigo activo esta en la raiz del repo.

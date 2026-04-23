@@ -4,21 +4,32 @@ import { EditorField, type EditorFieldHandle } from './editor/EditorField'
 const TAG_NAME = 'draft-to-api-editor'
 
 export class DraftToApiEditorElement extends HTMLElement {
+  static readonly formAssociated = true
+
   static get observedAttributes() {
     return ['name', 'value', 'placeholder', 'disabled', 'readonly', 'required']
   }
 
+  private internals?: ElementInternals
   private root?: Root
   private hiddenInput?: HTMLInputElement
   private reactContainer?: HTMLDivElement
   private editorHandle?: EditorFieldHandle
-  private form?: HTMLFormElement | null
+  private parentForm?: HTMLFormElement | null
   private currentValue = ''
   private defaultValue = ''
   private didInitializeValue = false
   private valueWhenFocused = ''
   private hasFocusWithin = false
   private readyDispatched = false
+
+  constructor() {
+    super()
+
+    if (typeof this.attachInternals === 'function') {
+      this.internals = this.attachInternals()
+    }
+  }
 
   connectedCallback() {
     if (!this.didInitializeValue) {
@@ -30,7 +41,7 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.attachFormResetListener()
     this.addEventListener('focusin', this.handleFocusIn)
     this.addEventListener('focusout', this.handleFocusOut)
-    this.syncHiddenInput()
+    this.syncFormState()
     this.renderReact()
   }
 
@@ -59,7 +70,7 @@ export class DraftToApiEditorElement extends HTMLElement {
       this.attachFormResetListener()
     }
 
-    this.syncHiddenInput()
+    this.syncFormState()
     this.renderReact()
   }
 
@@ -131,7 +142,7 @@ export class DraftToApiEditorElement extends HTMLElement {
   private applyCurrentValue(value: string) {
     this.currentValue = value
     this.didInitializeValue = true
-    this.syncHiddenInput()
+    this.syncFormState()
 
     if (this.editorHandle) {
       this.editorHandle.setMarkdown(value)
@@ -166,7 +177,7 @@ export class DraftToApiEditorElement extends HTMLElement {
       return
     }
 
-    if (this.name) {
+    if (this.name && !this.internals) {
       this.hiddenInput.name = this.name
     } else {
       this.hiddenInput.removeAttribute('name')
@@ -174,8 +185,38 @@ export class DraftToApiEditorElement extends HTMLElement {
 
     this.hiddenInput.defaultValue = this.defaultValue
     this.hiddenInput.value = this.currentValue
-    this.hiddenInput.disabled = this.disabled
-    this.hiddenInput.required = this.required
+    this.hiddenInput.disabled = this.disabled || !!this.internals
+    this.hiddenInput.required = this.required && !this.internals
+  }
+
+  private syncFormState() {
+    const isValueMissing = this.isValueMissing()
+
+    if (this.internals) {
+      this.internals.setFormValue(!this.disabled && this.name ? this.currentValue : null)
+
+      if (isValueMissing) {
+        this.internals.setValidity(
+          { valueMissing: true },
+          'Please fill out this field.',
+          this.reactContainer ?? this,
+        )
+      } else {
+        this.internals.setValidity({})
+      }
+    }
+
+    if (isValueMissing) {
+      this.setAttribute('aria-invalid', 'true')
+    } else {
+      this.removeAttribute('aria-invalid')
+    }
+
+    this.syncHiddenInput()
+  }
+
+  private isValueMissing() {
+    return this.required && !this.disabled && !this.readOnly && this.currentValue === ''
   }
 
   private renderReact() {
@@ -195,7 +236,7 @@ export class DraftToApiEditorElement extends HTMLElement {
         className="draft-to-api-editor__field"
         onChange={(nextValue) => {
           this.currentValue = nextValue
-          this.syncHiddenInput()
+          this.syncFormState()
           this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
         }}
         onReady={(handle) => {
@@ -213,19 +254,19 @@ export class DraftToApiEditorElement extends HTMLElement {
   }
 
   private attachFormResetListener() {
-    const nextForm = this.closest('form')
-    if (this.form === nextForm) {
+    const nextForm = this.internals?.form ?? this.closest('form')
+    if (this.parentForm === nextForm) {
       return
     }
 
     this.detachFormResetListener()
-    this.form = nextForm
-    this.form?.addEventListener('reset', this.handleFormReset)
+    this.parentForm = nextForm
+    this.parentForm?.addEventListener('reset', this.handleFormReset)
   }
 
   private detachFormResetListener() {
-    this.form?.removeEventListener('reset', this.handleFormReset)
-    this.form = undefined
+    this.parentForm?.removeEventListener('reset', this.handleFormReset)
+    this.parentForm = undefined
   }
 
   private reflectBooleanAttribute(name: string, value: boolean) {
