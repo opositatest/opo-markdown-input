@@ -47,6 +47,8 @@ API publica:
 - metodos: `focus()`, `getMarkdown()`, `setMarkdown(value)`
 - eventos: `input`, `change`, `ready`
 
+`required` participa en la validacion nativa del formulario en navegadores modernos mediante `ElementInternals`.
+
 ## Build distribuible
 
 ```bash
@@ -64,5 +66,6 @@ La pagina `web-component-test.html` sirve para validar el caso basico de uso en 
 
 - dos campos iguales
 - escritura libre en ambos
+- validacion de `required` si se marca el atributo en una instancia
 - submit de formulario
 - visualizacion del output enviado en pantalla

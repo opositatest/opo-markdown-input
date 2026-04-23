@@ -12,7 +12,7 @@
         <p class="eyebrow">Plain HTML Host</p>
         <h1>Prueba del Web Component</h1>
         <p class="lede">
-          Dos campos iguales para escribir libremente y un boton para ver el payload enviado.
+          Un campo obligatorio y otro opcional para validar escritura, bloqueo nativo y payload enviado.
         </p>
       </header>
 
@@ -20,22 +20,27 @@
         <section class="panel test-panel">
           <form id="editor-test-form" class="html-form simple-form">
             <label class="field-group">
-              <span>Campo 1</span>
+              <span>Campo 1 (required)</span>
               <draft-to-api-editor
                 id="editor-first"
                 name="fieldOne"
                 placeholder="Escribe lo que quieras..."
+                required
               ></draft-to-api-editor>
             </label>
 
             <label class="field-group">
-              <span>Campo 2</span>
+              <span>Campo 2 (optional)</span>
               <draft-to-api-editor
                 id="editor-second"
                 name="fieldTwo"
                 placeholder="Escribe lo que quieras..."
               ></draft-to-api-editor>
             </label>
+
+            <p>
+              Deja vacio el Campo 1 y pulsa "Mostrar output" para comprobar la validacion nativa.
+            </p>
 
             <div class="action-row">
               <button id="submit-form" type="submit">Mostrar output</button>
