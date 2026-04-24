@@ -12,7 +12,7 @@
         <p class="eyebrow">Plain HTML Host</p>
         <h1>Prueba del Web Component</h1>
         <p class="lede">
-          Un campo obligatorio y otro opcional para validar escritura, bloqueo nativo y payload enviado.
+          Un campo obligatorio, otro opcional y un tercero precargado para validar escritura, bloqueo nativo y payload enviado.
         </p>
       </header>
 
@@ -35,6 +35,15 @@
                 id="editor-second"
                 name="fieldTwo"
                 placeholder="Escribe lo que quieras..."
+              ></draft-to-api-editor>
+            </label>
+
+            <label class="field-group">
+              <span>Campo 3 (prefilled demo)</span>
+              <draft-to-api-editor
+                id="editor-third"
+                name="fieldThree"
+                value="## Nota tecnica&#10;&#10;Este campo viene con contenido de ejemplo para probar integracion realista en Sonata.&#10;&#10;- Texto enriquecido en Markdown&#10;- Lista con varios items&#10;- Bloques matematicos renderizados&#10;&#10;$$&#10;E = mc^2&#10;$$&#10;&#10;$$&#10;\int_0^1 x^2\,dx = \frac{1}{3}&#10;$$&#10;&#10;Fin de la prueba."
               ></draft-to-api-editor>
             </label>
 
