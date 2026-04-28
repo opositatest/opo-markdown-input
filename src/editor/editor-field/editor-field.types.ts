@@ -1,10 +1,10 @@
-export type TEditorFieldHandle = {
+export type TMarkdownTextEditorHandle = {
   focus(): void
   getMarkdown(): string
   setMarkdown(value: string): void
 }
 
-export type TEditorFieldProps = {
+export type TMarkdownTextEditorProps = {
   value?: string
   defaultValue?: string
   onChange?: (value: string) => void
@@ -12,7 +12,7 @@ export type TEditorFieldProps = {
   readonly?: boolean
   placeholder?: string
   className?: string
-  onReady?: (handle: TEditorFieldHandle) => void
+  onReady?: (handle: TMarkdownTextEditorHandle) => void
 }
 
 export type TMarkdownBlock = {

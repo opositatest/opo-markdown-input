@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent, type ReactElement } from 'react'
 
-import type { DraftToApiEditorElement } from '../draft-to-api-editor/draft-to-api-editor-element'
+import type { MarkdownTextEditorElement } from '../markdown-text-editor/markdown-text-editor-element'
 import {
   BODY_INITIAL_MARKDOWN,
   HOST_FORM_CHECKS,
@@ -10,8 +10,8 @@ import {
 type TSubmittedData = Record<string, FormDataEntryValue>
 
 export function App(): ReactElement {
-  const bodyRef = useRef<DraftToApiEditorElement | null>(null)
-  const summaryRef = useRef<DraftToApiEditorElement | null>(null)
+  const bodyRef = useRef<MarkdownTextEditorElement | null>(null)
+  const summaryRef = useRef<MarkdownTextEditorElement | null>(null)
   const [submittedData, setSubmittedData] = useState<TSubmittedData>({})
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
@@ -21,11 +21,11 @@ export function App(): ReactElement {
     setSubmittedData(Object.fromEntries(formData.entries()))
   }
 
-  function handleBodyRef(element: DraftToApiEditorElement | null): void {
+  function handleBodyRef(element: MarkdownTextEditorElement | null): void {
     bodyRef.current = element
   }
 
-  function handleSummaryRef(element: DraftToApiEditorElement | null): void {
+  function handleSummaryRef(element: MarkdownTextEditorElement | null): void {
     summaryRef.current = element
   }
 
@@ -57,14 +57,14 @@ export function App(): ReactElement {
             <div className="panel-heading">
               <h2>Formulario host</h2>
               <p>
-                Cada <code>{'<draft-to-api-editor>'}</code> sincroniza su valor Markdown con el
+                Cada <code>{'<markdown-text-editor>'}</code> sincroniza su valor Markdown con el
                 formulario usando `ElementInternals` o un `input type="hidden"` de fallback.
               </p>
             </div>
 
             <label className="field-group">
               <span>Body</span>
-              <draft-to-api-editor
+              <markdown-text-editor
                 ref={handleBodyRef}
                 name="body"
                 value={BODY_INITIAL_MARKDOWN}
@@ -74,7 +74,7 @@ export function App(): ReactElement {
 
             <label className="field-group">
               <span>Summary</span>
-              <draft-to-api-editor
+              <markdown-text-editor
                 ref={handleSummaryRef}
                 name="summary"
                 value={SUMMARY_INITIAL_MARKDOWN}

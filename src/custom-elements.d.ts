@@ -1,9 +1,9 @@
 import type * as React from 'react'
-import type { DraftToApiEditorElement } from './draft-to-api-editor/draft-to-api-editor-element'
+import type { MarkdownTextEditorElement } from './markdown-text-editor/markdown-text-editor-element'
 
-type DraftToApiEditorProps = React.DetailedHTMLProps<
-  React.HTMLAttributes<DraftToApiEditorElement>,
-  DraftToApiEditorElement
+type MarkdownTextEditorProps = React.DetailedHTMLProps<
+  React.HTMLAttributes<MarkdownTextEditorElement>,
+  MarkdownTextEditorElement
 > & {
   name?: string
   value?: string
@@ -16,7 +16,7 @@ type DraftToApiEditorProps = React.DetailedHTMLProps<
 declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
-      'draft-to-api-editor': DraftToApiEditorProps
+      'markdown-text-editor': MarkdownTextEditorProps
     }
   }
 }
@@ -24,7 +24,7 @@ declare module 'react' {
 declare module 'react/jsx-runtime' {
   namespace JSX {
     interface IntrinsicElements {
-      'draft-to-api-editor': DraftToApiEditorProps
+      'markdown-text-editor': MarkdownTextEditorProps
     }
   }
 }

@@ -1,2 +1,2 @@
 import './index.css'
-import './draft-to-api-editor/register-draft-to-api-editor'
+import './markdown-text-editor/register-markdown-text-editor'
