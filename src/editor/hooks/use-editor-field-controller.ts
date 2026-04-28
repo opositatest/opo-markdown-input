@@ -3,17 +3,17 @@ import { useCallback, useEffect, useImperativeHandle, useRef, type ForwardedRef 
 import { useAppBlockNoteEditor } from '../../hooks/use-app-block-note-editor/use-app-block-note-editor'
 import { editorBlocksToMarkdown, markdownToEditorBlocks } from '../editor-field/editor-field-markdown'
 import type {
-  TEditorFieldHandle,
-  TEditorFieldProps,
+  TMarkdownTextEditorHandle,
+  TMarkdownTextEditorProps,
   TMarkdownEditor,
 } from '../editor-field/editor-field.types'
 import { filterEditorSlashMenuItems } from '../editor-schema'
 
 type TUseEditorFieldControllerArgs = Pick<
-  TEditorFieldProps,
+  TMarkdownTextEditorProps,
   'defaultValue' | 'onChange' | 'onReady' | 'placeholder' | 'value'
 > & {
-  ref: ForwardedRef<TEditorFieldHandle>
+  ref: ForwardedRef<TMarkdownTextEditorHandle>
 }
 
 type TUseEditorFieldControllerResult = {
@@ -59,7 +59,7 @@ export function useEditorFieldController(
 
   useImperativeHandle(
     ref,
-    (): TEditorFieldHandle => ({
+    (): TMarkdownTextEditorHandle => ({
       focus: focusEditor,
       getMarkdown,
       setMarkdown,

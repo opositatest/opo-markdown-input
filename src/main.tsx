@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 
 import { App } from './app/app'
 import './index.css'
-import './draft-to-api-editor/register-draft-to-api-editor'
+import './markdown-text-editor/register-markdown-text-editor'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

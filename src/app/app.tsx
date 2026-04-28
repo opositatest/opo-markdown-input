@@ -1,41 +1,44 @@
-import { useRef, useState, type FormEvent, type ReactElement } from 'react'
+import { useRef, useState, type FormEvent, type ReactElement } from "react";
 
-import type { DraftToApiEditorElement } from '../draft-to-api-editor/draft-to-api-editor-element'
+import type { MarkdownTextEditorElement } from "../markdown-text-editor/markdown-text-editor-element";
 import {
+  BODY_EDITOR_HEIGHT,
   BODY_INITIAL_MARKDOWN,
   HOST_FORM_CHECKS,
+  SUMMARY_EDITOR_HEIGHT,
   SUMMARY_INITIAL_MARKDOWN,
-} from './app.constants'
+  SUMMARY_EDITOR_WIDTH,
+} from "./app.constants";
 
-type TSubmittedData = Record<string, FormDataEntryValue>
+type TSubmittedData = Record<string, FormDataEntryValue>;
 
 export function App(): ReactElement {
-  const bodyRef = useRef<DraftToApiEditorElement | null>(null)
-  const summaryRef = useRef<DraftToApiEditorElement | null>(null)
-  const [submittedData, setSubmittedData] = useState<TSubmittedData>({})
+  const bodyRef = useRef<MarkdownTextEditorElement | null>(null);
+  const summaryRef = useRef<MarkdownTextEditorElement | null>(null);
+  const [submittedData, setSubmittedData] = useState<TSubmittedData>({});
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault()
+    event.preventDefault();
 
-    const formData = new FormData(event.currentTarget)
-    setSubmittedData(Object.fromEntries(formData.entries()))
+    const formData = new FormData(event.currentTarget);
+    setSubmittedData(Object.fromEntries(formData.entries()));
   }
 
-  function handleBodyRef(element: DraftToApiEditorElement | null): void {
-    bodyRef.current = element
+  function handleBodyRef(element: MarkdownTextEditorElement | null): void {
+    bodyRef.current = element;
   }
 
-  function handleSummaryRef(element: DraftToApiEditorElement | null): void {
-    summaryRef.current = element
+  function handleSummaryRef(element: MarkdownTextEditorElement | null): void {
+    summaryRef.current = element;
   }
 
   function handleProgrammaticSummaryUpdate(): void {
-    summaryRef.current?.setMarkdown('Resumen actualizado desde JavaScript')
-    summaryRef.current?.focus()
+    summaryRef.current?.setMarkdown("Resumen actualizado desde JavaScript");
+    summaryRef.current?.focus();
   }
 
   function handleBodyFocus(): void {
-    bodyRef.current?.focus()
+    bodyRef.current?.focus();
   }
 
   return (
@@ -45,8 +48,8 @@ export function App(): ReactElement {
           <p className="eyebrow">React 19 + Vite 8</p>
           <h1>Draft to API Editor</h1>
           <p className="lede">
-            El host prueba submit, reset, multiples instancias y cambios programaticos del
-            custom element.
+            El host prueba submit, reset, multiples instancias y cambios
+            programaticos del custom element.
           </p>
         </div>
       </header>
@@ -57,15 +60,17 @@ export function App(): ReactElement {
             <div className="panel-heading">
               <h2>Formulario host</h2>
               <p>
-                Cada <code>{'<draft-to-api-editor>'}</code> sincroniza su valor Markdown con el
-                formulario usando `ElementInternals` o un `input type="hidden"` de fallback.
+                Cada <code>{"<markdown-text-editor>"}</code> sincroniza su valor
+                Markdown con el formulario usando `ElementInternals` o un `input
+                type="hidden"` de fallback.
               </p>
             </div>
 
             <label className="field-group">
               <span>Body</span>
-              <draft-to-api-editor
+              <markdown-text-editor
                 ref={handleBodyRef}
+                height={BODY_EDITOR_HEIGHT}
                 name="body"
                 value={BODY_INITIAL_MARKDOWN}
                 placeholder="Escribe el body..."
@@ -74,11 +79,13 @@ export function App(): ReactElement {
 
             <label className="field-group">
               <span>Summary</span>
-              <draft-to-api-editor
+              <markdown-text-editor
                 ref={handleSummaryRef}
+                height={SUMMARY_EDITOR_HEIGHT}
                 name="summary"
                 value={SUMMARY_INITIAL_MARKDOWN}
                 placeholder="Escribe el resumen..."
+                width={SUMMARY_EDITOR_WIDTH}
               />
             </label>
 
@@ -94,7 +101,11 @@ export function App(): ReactElement {
               >
                 Cambio programatico
               </button>
-              <button type="button" className="secondary-button" onClick={handleBodyFocus}>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={handleBodyFocus}
+              >
                 Focus body
               </button>
             </div>
@@ -111,12 +122,12 @@ export function App(): ReactElement {
             <h2>Checks del plan</h2>
             <ul className="result-list">
               {HOST_FORM_CHECKS.map((item) => {
-                return <li key={item}>{item}</li>
+                return <li key={item}>{item}</li>;
               })}
             </ul>
           </section>
         </aside>
       </main>
     </div>
-  )
+  );
 }

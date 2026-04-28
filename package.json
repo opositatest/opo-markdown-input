@@ -1,15 +1,32 @@
 {
-  "name": "spike-text-editor",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@opositatest/markdown-text-editor",
+  "version": "1.0.0",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/react/index.js"
+    },
+    "./input": {
+      "import": "./dist/editor.js"
+    },
+    "./style": "./dist/editor.css"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:web-component": "vite build --config vite.web-component.config.ts",
+    "build:react": "vite build --config vite.react.config.ts",
+    "build:package": "npm run build:web-component && npm run build:react",
     "typecheck": "tsc -b",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "release": "release-it"
   },
   "dependencies": {
     "@blocknote/core": "^0.47.3",
@@ -35,6 +52,7 @@
     "rollup-plugin-visualizer": "^7.0.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
-    "vite": "^8.0.10"
+    "vite": "^8.0.10",
+    "release-it": "^17.0.0"
   }
 }

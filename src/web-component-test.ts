@@ -1,5 +1,5 @@
 import './index.css'
-import './draft-to-api-editor/register-draft-to-api-editor'
+import './markdown-text-editor/register-markdown-text-editor'
 
 const form = getElement<HTMLFormElement>('editor-test-form')
 const formPayload = getElement<HTMLElement>('form-payload')

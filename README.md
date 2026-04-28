@@ -1,71 +1,139 @@
-# Draft to API Editor
+# @opositatest/markdown-text-editor
 
-Editor basado en React expuesto como `Web Component` para usarlo desde HTML normal.
+Rich-text editor that serializes content as Markdown. Ships as a self-contained Web Component and as a React component.
 
-## Objetivo
+## Web Component
 
-- usar el editor como `<draft-to-api-editor>`
-- soportar multiples instancias
-- integrarlo en formularios con `input type="hidden"`
-- poder consumirlo desde proyectos sin React
-
-## Desarrollo
-
-```bash
-npm install
-npm run dev
-```
-
-Paginas utiles en local:
-
-- `http://localhost:5173/`
-- `http://localhost:5173/web-component-test.html`
-
-## Comandos
-
-```bash
-npm run dev
-npm run build
-npm run build:web-component
-npm run lint
-```
-
-## Uso del componente
+Load via CDN (no build step required):
 
 ```html
-<draft-to-api-editor
-  name="body"
-  value="Texto inicial"
-  placeholder="Escribe aqui..."
-></draft-to-api-editor>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@opositatest/markdown-text-editor/dist/editor.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@opositatest/markdown-text-editor/dist/editor.js"></script>
 ```
 
-API publica:
+### Usage
 
-- atributos: `name`, `value`, `placeholder`, `disabled`, `readonly`, `required`
-- propiedades: `element.value`, `element.disabled`, `element.readOnly`
-- metodos: `focus()`, `getMarkdown()`, `setMarkdown(value)`
-- eventos: `input`, `change`, `ready`
+```html
+<form>
+  <markdown-text-editor
+    name="body"
+    value="Initial content"
+    placeholder="Write here…"
+    width="100%"
+    height="320px"
+    required
+  ></markdown-text-editor>
+</form>
+```
 
-`required` participa en la validacion nativa del formulario en navegadores modernos mediante `ElementInternals`.
+### Attributes
 
-## Build distribuible
+| Attribute     | Type    | Description                                      |
+|---------------|---------|--------------------------------------------------|
+| `name`        | string  | Field name for form submission                   |
+| `value`       | string  | Initial Markdown value                           |
+| `placeholder` | string  | Placeholder text shown when empty                |
+| `width`       | string  | CSS width for the editor container               |
+| `height`      | string  | CSS height for the editor container              |
+| `disabled`    | boolean | Disables the editor                              |
+| `readonly`    | boolean | Makes the editor read-only                       |
+| `required`    | boolean | Participates in native form validation           |
+
+`width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
+
+### Properties
+
+| Property            | Type    | Description                         |
+|---------------------|---------|-------------------------------------|
+| `element.value`     | string  | Get or set Markdown content         |
+| `element.width`     | string  | Get or set CSS width                |
+| `element.height`    | string  | Get or set CSS height               |
+| `element.disabled`  | boolean | Get or set disabled state           |
+| `element.readOnly`  | boolean | Get or set read-only state          |
+
+### Methods
+
+| Method                    | Description                        |
+|---------------------------|------------------------------------|
+| `focus()`                 | Focus the editor                   |
+| `getMarkdown()`           | Returns current content as Markdown |
+| `setMarkdown(value)`      | Replaces editor content            |
+
+### Events
+
+| Event   | Fires when                                      |
+|---------|-------------------------------------------------|
+| `input` | On every content change (keystroke)             |
+| `change`| On blur if value changed since focus            |
+| `ready` | Once the editor has initialized                 |
+
+### Form integration
+
+`required` participates in native browser form validation via `ElementInternals` (with a hidden-input fallback for browsers that don't support it). The field value is submitted with the form using the `name` attribute.
+
+---
+
+## React Component
 
 ```bash
-npm run build:web-component
+npm install @opositatest/markdown-text-editor
 ```
 
-Salida:
+```tsx
+import { MarkdownTextEditor } from '@opositatest/markdown-text-editor'
+import '@opositatest/markdown-text-editor/style'
 
-- `dist/editor.js`
-- `dist/editor.css`
+<MarkdownTextEditor defaultValue="Hello" width="100%" height="320px" />
+```
 
-## Pruebas manuales
+### Props
 
-La pagina `web-component-test.html` sirve para validar el caso basico de uso en HTML plano:
+| Prop           | Type                                        | Description                                      |
+|----------------|---------------------------------------------|--------------------------------------------------|
+| `value`        | `string`                                    | Controlled Markdown value                        |
+| `defaultValue` | `string`                                    | Uncontrolled initial value                       |
+| `onChange`     | `(value: string) => void`                   | Called on every content change                   |
+| `onReady`      | `(handle: MarkdownTextEditorHandle) => void`| Called once editor has initialized               |
+| `placeholder`  | `string`                                    | Placeholder text shown when empty                |
+| `width`        | `string`                                    | CSS width for the editor container               |
+| `height`       | `string`                                    | CSS height for the editor container              |
+| `disabled`     | `boolean`                                   | Disables the editor                              |
+| `readonly`     | `boolean`                                   | Makes the editor read-only                       |
+| `className`    | `string`                                    | Additional CSS class on the editor container     |
 
-- dos campos iguales
-- escritura libre en ambos
-- validacion de `required` si se marca el atributo en una instancia
-- submit de formulario
-- visualizacion del output enviado en pantalla
+`width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
+
+### Imperative handle (via ref)
+
+```tsx
+import { useRef } from 'react'
+import { MarkdownTextEditor, type TMarkdownTextEditorHandle } from '@opositatest/markdown-text-editor'
+
+const ref = useRef<TMarkdownTextEditorHandle>(null)
+
+<MarkdownTextEditor ref={ref} defaultValue="Hello" onChange={setValue} />
+```
+
+| Method                | Description                         |
+|-----------------------|-------------------------------------|
+| `ref.focus()`         | Focus the editor                    |
+| `ref.getMarkdown()`   | Returns current content as Markdown |
+| `ref.setMarkdown(v)`  | Replaces editor content             |
+
+---
+
+## Package exports
+
+| Export                                   | Description                        |
+|------------------------------------------|------------------------------------|
+| `@opositatest/markdown-text-editor`      | React component + types            |
+| `@opositatest/markdown-text-editor/input`| Self-contained Web Component bundle |
+| `@opositatest/markdown-text-editor/style`| CSS stylesheet                     |
+
+## Browser support
+
+Requires browsers with support for [Custom Elements v1](https://caniuse.com/custom-elementsv1) and [ElementInternals](https://caniuse.com/mdn-api_elementinternals). All modern browsers (Chrome 77+, Firefox 98+, Safari 16.4+) are supported.
+
+## Peer dependencies (React component only)
+
+`react >= 19`, `react-dom >= 19`

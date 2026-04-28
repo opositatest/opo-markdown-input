@@ -1,26 +1,26 @@
 import { createRoot, type Root } from 'react-dom/client'
 
 import {
-  DRAFT_TO_API_EDITOR_FIELD_CLASS_NAME,
-  DRAFT_TO_API_EDITOR_MOUNT_CLASS_NAME,
-  DRAFT_TO_API_EDITOR_OBSERVED_ATTRIBUTES,
+  MARKDOWN_TEXT_EDITOR_FIELD_CLASS_NAME,
+  MARKDOWN_TEXT_EDITOR_MOUNT_CLASS_NAME,
+  MARKDOWN_TEXT_EDITOR_OBSERVED_ATTRIBUTES,
   VALUE_MISSING_MESSAGE,
-} from './draft-to-api-editor.constants'
-import { EditorField } from '../editor/editor-field/editor-field'
-import type { TEditorFieldHandle } from '../editor/editor-field/editor-field.types'
+} from './markdown-text-editor.constants'
+import { MarkdownTextEditor } from '../editor/editor-field/editor-field'
+import type { TMarkdownTextEditorHandle } from '../editor/editor-field/editor-field.types'
 
-export class DraftToApiEditorElement extends HTMLElement {
+export class MarkdownTextEditorElement extends HTMLElement {
   static readonly formAssociated = true
 
   static get observedAttributes(): string[] {
-    return [...DRAFT_TO_API_EDITOR_OBSERVED_ATTRIBUTES]
+    return [...MARKDOWN_TEXT_EDITOR_OBSERVED_ATTRIBUTES]
   }
 
   private internals?: ElementInternals
   private root?: Root
   private hiddenInput?: HTMLInputElement
   private reactContainer?: HTMLDivElement
-  private editorHandle?: TEditorFieldHandle
+  private editorHandle?: TMarkdownTextEditorHandle
   private parentForm?: HTMLFormElement | null
   private currentValue = ''
   private defaultValue = ''
@@ -137,6 +137,22 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.reflectStringAttribute('placeholder', value)
   }
 
+  public get width(): string {
+    return this.getAttribute('width') ?? ''
+  }
+
+  public set width(value: string) {
+    this.reflectStringAttribute('width', value)
+  }
+
+  public get height(): string {
+    return this.getAttribute('height') ?? ''
+  }
+
+  public set height(value: string) {
+    this.reflectStringAttribute('height', value)
+  }
+
   public focus(): void {
     this.editorHandle?.focus()
   }
@@ -173,7 +189,7 @@ export class DraftToApiEditorElement extends HTMLElement {
 
     if (!this.reactContainer) {
       this.reactContainer = document.createElement('div')
-      this.reactContainer.className = DRAFT_TO_API_EDITOR_MOUNT_CLASS_NAME
+      this.reactContainer.className = MARKDOWN_TEXT_EDITOR_MOUNT_CLASS_NAME
       this.append(this.reactContainer)
     }
 
@@ -235,13 +251,15 @@ export class DraftToApiEditorElement extends HTMLElement {
     }
 
     this.root.render(
-      <EditorField
+      <MarkdownTextEditor
         ref={this.handleEditorRef}
         value={this.currentValue}
         disabled={this.disabled}
+        height={this.height}
         readonly={this.readOnly}
         placeholder={this.placeholder}
-        className={DRAFT_TO_API_EDITOR_FIELD_CLASS_NAME}
+        width={this.width}
+        className={MARKDOWN_TEXT_EDITOR_FIELD_CLASS_NAME}
         onChange={this.handleEditorChange}
         onReady={this.handleEditorReady}
       />,
@@ -282,7 +300,7 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.setAttribute(name, value)
   }
 
-  private handleEditorRef = (handle: TEditorFieldHandle | null): void => {
+  private handleEditorRef = (handle: TMarkdownTextEditorHandle | null): void => {
     this.editorHandle = handle ?? undefined
   }
 
@@ -292,7 +310,7 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
   }
 
-  private handleEditorReady = (handle: TEditorFieldHandle): void => {
+  private handleEditorReady = (handle: TMarkdownTextEditorHandle): void => {
     this.editorHandle = handle
 
     if (this.readyDispatched) {
