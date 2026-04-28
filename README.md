@@ -1,5 +1,14 @@
 # @opositatest/markdown-text-editor
 
+[![Lint](https://github.com/opositatest/opo-markdown-input/actions/workflows/lint.yml/badge.svg)](https://github.com/opositatest/opo-markdown-input/actions/workflows/lint.yml)
+[![TypeScript check](https://github.com/opositatest/opo-markdown-input/actions/workflows/typecheck.yml/badge.svg)](https://github.com/opositatest/opo-markdown-input/actions/workflows/typecheck.yml)
+[![npm version](https://img.shields.io/npm/v/%40opositatest%2Fmarkdown-text-editor)](https://www.npmjs.com/package/@opositatest/markdown-text-editor)
+[![CDN](https://img.shields.io/badge/CDN-jsDelivr-ff5627)](https://www.jsdelivr.com/package/npm/@opositatest/markdown-text-editor)
+[![TypeScript](https://img.shields.io/badge/TypeScript-supported-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![ESM](https://img.shields.io/badge/ESM-native-f7df1e?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+[![Web Component](https://img.shields.io/badge/Web%20Component-custom%20element-7c3aed)](https://developer.mozilla.org/en-US/docs/Web/API/Web_components)
+[![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev/)
+
 Rich-text editor that serializes content as Markdown. Ships as a self-contained Web Component and as a React component.
 
 ## Web Component
