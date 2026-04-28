@@ -16,7 +16,7 @@ export default defineConfig({
     cssCodeSplit: false,
     rollupOptions: {
       output: {
-        inlineDynamicImports: true,
+        codeSplitting: false,
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) {
             return 'editor.css'
