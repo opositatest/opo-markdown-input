@@ -1,20 +1,26 @@
 import { createRoot, type Root } from 'react-dom/client'
-import { EditorField, type EditorFieldHandle } from './editor/EditorField'
 
-const TAG_NAME = 'draft-to-api-editor'
+import {
+  DRAFT_TO_API_EDITOR_FIELD_CLASS_NAME,
+  DRAFT_TO_API_EDITOR_MOUNT_CLASS_NAME,
+  DRAFT_TO_API_EDITOR_OBSERVED_ATTRIBUTES,
+  VALUE_MISSING_MESSAGE,
+} from './draft-to-api-editor.constants'
+import { EditorField } from '../editor/editor-field/editor-field'
+import type { TEditorFieldHandle } from '../editor/editor-field/editor-field.types'
 
 export class DraftToApiEditorElement extends HTMLElement {
   static readonly formAssociated = true
 
-  static get observedAttributes() {
-    return ['name', 'value', 'placeholder', 'disabled', 'readonly', 'required']
+  static get observedAttributes(): string[] {
+    return [...DRAFT_TO_API_EDITOR_OBSERVED_ATTRIBUTES]
   }
 
   private internals?: ElementInternals
   private root?: Root
   private hiddenInput?: HTMLInputElement
   private reactContainer?: HTMLDivElement
-  private editorHandle?: EditorFieldHandle
+  private editorHandle?: TEditorFieldHandle
   private parentForm?: HTMLFormElement | null
   private currentValue = ''
   private defaultValue = ''
@@ -23,7 +29,7 @@ export class DraftToApiEditorElement extends HTMLElement {
   private hasFocusWithin = false
   private readyDispatched = false
 
-  constructor() {
+  public constructor() {
     super()
 
     if (typeof this.attachInternals === 'function') {
@@ -31,7 +37,7 @@ export class DraftToApiEditorElement extends HTMLElement {
     }
   }
 
-  connectedCallback() {
+  public connectedCallback(): void {
     if (!this.didInitializeValue) {
       this.defaultValue = this.getAttribute('value') ?? ''
       this.applyCurrentValue(this.defaultValue)
@@ -45,7 +51,7 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.renderReact()
   }
 
-  disconnectedCallback() {
+  public disconnectedCallback(): void {
     this.removeEventListener('focusin', this.handleFocusIn)
     this.removeEventListener('focusout', this.handleFocusOut)
     this.detachFormResetListener()
@@ -56,7 +62,11 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.hasFocusWithin = false
   }
 
-  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
+  public attributeChangedCallback(
+    name: string,
+    oldValue: string | null,
+    newValue: string | null,
+  ): void {
     if (oldValue === newValue) {
       return
     }
@@ -74,19 +84,19 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.renderReact()
   }
 
-  get name() {
+  public get name(): string {
     return this.getAttribute('name') ?? ''
   }
 
-  set name(value: string) {
+  public set name(value: string) {
     this.reflectStringAttribute('name', value)
   }
 
-  get value() {
+  public get value(): string {
     return this.currentValue
   }
 
-  set value(value: string) {
+  public set value(value: string) {
     const nextValue = value ?? ''
     if (nextValue === this.currentValue && this.didInitializeValue) {
       return
@@ -95,51 +105,51 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.applyCurrentValue(nextValue)
   }
 
-  get disabled() {
+  public get disabled(): boolean {
     return this.hasAttribute('disabled')
   }
 
-  set disabled(value: boolean) {
+  public set disabled(value: boolean) {
     this.reflectBooleanAttribute('disabled', value)
   }
 
-  get readOnly() {
+  public get readOnly(): boolean {
     return this.hasAttribute('readonly')
   }
 
-  set readOnly(value: boolean) {
+  public set readOnly(value: boolean) {
     this.reflectBooleanAttribute('readonly', value)
   }
 
-  get required() {
+  public get required(): boolean {
     return this.hasAttribute('required')
   }
 
-  set required(value: boolean) {
+  public set required(value: boolean) {
     this.reflectBooleanAttribute('required', value)
   }
 
-  get placeholder() {
+  public get placeholder(): string {
     return this.getAttribute('placeholder') ?? ''
   }
 
-  set placeholder(value: string) {
+  public set placeholder(value: string) {
     this.reflectStringAttribute('placeholder', value)
   }
 
-  focus() {
+  public focus(): void {
     this.editorHandle?.focus()
   }
 
-  getMarkdown() {
+  public getMarkdown(): string {
     return this.currentValue
   }
 
-  setMarkdown(value: string) {
+  public setMarkdown(value: string): void {
     this.value = value
   }
 
-  private applyCurrentValue(value: string) {
+  private applyCurrentValue(value: string): void {
     this.currentValue = value
     this.didInitializeValue = true
     this.syncFormState()
@@ -152,8 +162,8 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.renderReact()
   }
 
-  private ensureDom() {
-    if (!this.hiddenInput) {
+  private ensureDom(): void {
+    if (!this.internals && !this.hiddenInput) {
       this.hiddenInput = document.createElement('input')
       this.hiddenInput.type = 'hidden'
       this.hiddenInput.tabIndex = -1
@@ -163,7 +173,7 @@ export class DraftToApiEditorElement extends HTMLElement {
 
     if (!this.reactContainer) {
       this.reactContainer = document.createElement('div')
-      this.reactContainer.className = 'draft-to-api-editor__mount'
+      this.reactContainer.className = DRAFT_TO_API_EDITOR_MOUNT_CLASS_NAME
       this.append(this.reactContainer)
     }
 
@@ -172,12 +182,12 @@ export class DraftToApiEditorElement extends HTMLElement {
     }
   }
 
-  private syncHiddenInput() {
+  private syncHiddenInput(): void {
     if (!this.hiddenInput) {
       return
     }
 
-    if (this.name && !this.internals) {
+    if (this.name) {
       this.hiddenInput.name = this.name
     } else {
       this.hiddenInput.removeAttribute('name')
@@ -185,11 +195,11 @@ export class DraftToApiEditorElement extends HTMLElement {
 
     this.hiddenInput.defaultValue = this.defaultValue
     this.hiddenInput.value = this.currentValue
-    this.hiddenInput.disabled = this.disabled || !!this.internals
-    this.hiddenInput.required = this.required && !this.internals
+    this.hiddenInput.disabled = this.disabled
+    this.hiddenInput.required = this.required
   }
 
-  private syncFormState() {
+  private syncFormState(): void {
     const isValueMissing = this.isValueMissing()
 
     if (this.internals) {
@@ -198,7 +208,7 @@ export class DraftToApiEditorElement extends HTMLElement {
       if (isValueMissing) {
         this.internals.setValidity(
           { valueMissing: true },
-          'Please fill out this field.',
+          VALUE_MISSING_MESSAGE,
           this.reactContainer ?? this,
         )
       } else {
@@ -215,45 +225,30 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.syncHiddenInput()
   }
 
-  private isValueMissing() {
+  private isValueMissing(): boolean {
     return this.required && !this.disabled && !this.readOnly && this.currentValue === ''
   }
 
-  private renderReact() {
+  private renderReact(): void {
     if (!this.isConnected || !this.root) {
       return
     }
 
     this.root.render(
       <EditorField
-        ref={(handle) => {
-          this.editorHandle = handle ?? undefined
-        }}
+        ref={this.handleEditorRef}
         value={this.currentValue}
         disabled={this.disabled}
         readonly={this.readOnly}
         placeholder={this.placeholder}
-        className="draft-to-api-editor__field"
-        onChange={(nextValue) => {
-          this.currentValue = nextValue
-          this.syncFormState()
-          this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
-        }}
-        onReady={(handle) => {
-          this.editorHandle = handle
-
-          if (this.readyDispatched) {
-            return
-          }
-
-          this.readyDispatched = true
-          this.dispatchEvent(new CustomEvent('ready', { bubbles: true, composed: true }))
-        }}
+        className={DRAFT_TO_API_EDITOR_FIELD_CLASS_NAME}
+        onChange={this.handleEditorChange}
+        onReady={this.handleEditorReady}
       />,
     )
   }
 
-  private attachFormResetListener() {
+  private attachFormResetListener(): void {
     const nextForm = this.internals?.form ?? this.closest('form')
     if (this.parentForm === nextForm) {
       return
@@ -264,12 +259,12 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.parentForm?.addEventListener('reset', this.handleFormReset)
   }
 
-  private detachFormResetListener() {
+  private detachFormResetListener(): void {
     this.parentForm?.removeEventListener('reset', this.handleFormReset)
     this.parentForm = undefined
   }
 
-  private reflectBooleanAttribute(name: string, value: boolean) {
+  private reflectBooleanAttribute(name: string, value: boolean): void {
     if (value) {
       this.setAttribute(name, '')
       return
@@ -278,7 +273,7 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.removeAttribute(name)
   }
 
-  private reflectStringAttribute(name: string, value: string) {
+  private reflectStringAttribute(name: string, value: string): void {
     if (!value) {
       this.removeAttribute(name)
       return
@@ -287,13 +282,34 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.setAttribute(name, value)
   }
 
-  private handleFormReset = () => {
+  private handleEditorRef = (handle: TEditorFieldHandle | null): void => {
+    this.editorHandle = handle ?? undefined
+  }
+
+  private handleEditorChange = (nextValue: string): void => {
+    this.currentValue = nextValue
+    this.syncFormState()
+    this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+  }
+
+  private handleEditorReady = (handle: TEditorFieldHandle): void => {
+    this.editorHandle = handle
+
+    if (this.readyDispatched) {
+      return
+    }
+
+    this.readyDispatched = true
+    this.dispatchEvent(new CustomEvent('ready', { bubbles: true, composed: true }))
+  }
+
+  private handleFormReset = (): void => {
     queueMicrotask(() => {
       this.applyCurrentValue(this.defaultValue)
     })
   }
 
-  private handleFocusIn = () => {
+  private handleFocusIn = (): void => {
     if (this.hasFocusWithin) {
       return
     }
@@ -302,7 +318,7 @@ export class DraftToApiEditorElement extends HTMLElement {
     this.valueWhenFocused = this.currentValue
   }
 
-  private handleFocusOut = (event: FocusEvent) => {
+  private handleFocusOut = (event: FocusEvent): void => {
     const nextTarget = event.relatedTarget
     if (nextTarget instanceof Node && this.contains(nextTarget)) {
       return
@@ -319,11 +335,3 @@ export class DraftToApiEditorElement extends HTMLElement {
     }
   }
 }
-
-export function registerDraftToApiEditor() {
-  if (!customElements.get(TAG_NAME)) {
-    customElements.define(TAG_NAME, DraftToApiEditorElement)
-  }
-}
-
-registerDraftToApiEditor()

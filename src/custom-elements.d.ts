@@ -1,5 +1,5 @@
 import type * as React from 'react'
-import type { DraftToApiEditorElement } from './register-web-component'
+import type { DraftToApiEditorElement } from './draft-to-api-editor/draft-to-api-editor-element'
 
 type DraftToApiEditorProps = React.DetailedHTMLProps<
   React.HTMLAttributes<DraftToApiEditorElement>,

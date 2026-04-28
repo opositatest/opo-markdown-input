@@ -1,2 +1,2 @@
 import './index.css'
-import './register-web-component'
+import './draft-to-api-editor/register-draft-to-api-editor'

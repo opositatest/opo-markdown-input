@@ -1,12 +1,12 @@
 import { BlockNoteSchema, defaultBlockSpecs } from '@blocknote/core'
 import { filterSuggestionItems, insertOrUpdateBlockForSlashMenu } from '@blocknote/core/extensions'
 import { getDefaultReactSlashMenuItems, type DefaultReactSuggestionItem } from '@blocknote/react'
-import { MathBlock } from './MathBlock'
+import { mathBlockSpec } from './math-block/math-block-spec'
 
 export const editorSchema = BlockNoteSchema.create({
   blockSpecs: {
     ...defaultBlockSpecs,
-    math: MathBlock(),
+    math: mathBlockSpec(),
   },
 })
 
@@ -25,7 +25,7 @@ function getMathSlashMenuItem(editor: typeof editorSchema.BlockNoteEditor): Defa
 export function filterEditorSlashMenuItems(
   editor: typeof editorSchema.BlockNoteEditor,
   query: string,
-) {
+): DefaultReactSuggestionItem[] {
   return filterSuggestionItems(
     [...getDefaultReactSlashMenuItems(editor), getMathSlashMenuItem(editor)],
     query,
