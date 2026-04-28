@@ -11,13 +11,57 @@
 
 Rich-text editor that serializes content as Markdown. Ships as a self-contained Web Component and as a React component.
 
+## Demo
+
+<p align="center">
+  <img src="./docs/demo-slash-menu.png" alt="Markdown Text Editor slash menu" width="720" />
+</p>
+
+## Supported content
+
+The editor currently focuses on text-first rich content that serializes cleanly to Markdown.
+
+- Paragraphs
+- Headings (`H1`, `H2`, `H3`)
+- Bullet lists
+- Numbered lists
+- Checklists
+- Toggle lists
+- Block quotes
+- Code blocks
+- Links
+- Inline styles: bold, italic, underline, strikethrough, and inline code
+- Display math blocks written in LaTeX
+
+### Math / LaTeX blocks
+
+The package includes a custom math block on top of the default BlockNote schema. It renders display formulas with KaTeX and stores them as fenced display-math blocks in Markdown:
+
+```md
+$$
+\int_0^1 x^2 dx = \frac{1}{3}
+$$
+```
+
+In the editor UI, the math block is available from the slash menu and can be found with queries such as `/math`, `/latex`, `/katex`, or `/formula`.
+
+### Scope note
+
+This package documents and supports the text-oriented authoring experience above, including the custom math block. Advanced upstream BlockNote media and table flows are not currently part of the documented surface of this package.
+
 ## Web Component
 
 Load via CDN (no build step required):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@opositatest/markdown-text-editor/dist/editor.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@opositatest/markdown-text-editor/dist/editor.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@opositatest/markdown-text-editor/dist/editor.css"
+/>
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/@opositatest/markdown-text-editor/dist/editor.js"
+></script>
 ```
 
 ### Usage
@@ -37,44 +81,44 @@ Load via CDN (no build step required):
 
 ### Attributes
 
-| Attribute     | Type    | Description                                      |
-|---------------|---------|--------------------------------------------------|
-| `name`        | string  | Field name for form submission                   |
-| `value`       | string  | Initial Markdown value                           |
-| `placeholder` | string  | Placeholder text shown when empty                |
-| `width`       | string  | CSS width for the editor container               |
-| `height`      | string  | CSS height for the editor container              |
-| `disabled`    | boolean | Disables the editor                              |
-| `readonly`    | boolean | Makes the editor read-only                       |
-| `required`    | boolean | Participates in native form validation           |
+| Attribute     | Type    | Description                            |
+| ------------- | ------- | -------------------------------------- |
+| `name`        | string  | Field name for form submission         |
+| `value`       | string  | Initial Markdown value                 |
+| `placeholder` | string  | Placeholder text shown when empty      |
+| `width`       | string  | CSS width for the editor container     |
+| `height`      | string  | CSS height for the editor container    |
+| `disabled`    | boolean | Disables the editor                    |
+| `readonly`    | boolean | Makes the editor read-only             |
+| `required`    | boolean | Participates in native form validation |
 
 `width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
 
 ### Properties
 
-| Property            | Type    | Description                         |
-|---------------------|---------|-------------------------------------|
-| `element.value`     | string  | Get or set Markdown content         |
-| `element.width`     | string  | Get or set CSS width                |
-| `element.height`    | string  | Get or set CSS height               |
-| `element.disabled`  | boolean | Get or set disabled state           |
-| `element.readOnly`  | boolean | Get or set read-only state          |
+| Property           | Type    | Description                 |
+| ------------------ | ------- | --------------------------- |
+| `element.value`    | string  | Get or set Markdown content |
+| `element.width`    | string  | Get or set CSS width        |
+| `element.height`   | string  | Get or set CSS height       |
+| `element.disabled` | boolean | Get or set disabled state   |
+| `element.readOnly` | boolean | Get or set read-only state  |
 
 ### Methods
 
-| Method                    | Description                        |
-|---------------------------|------------------------------------|
-| `focus()`                 | Focus the editor                   |
-| `getMarkdown()`           | Returns current content as Markdown |
-| `setMarkdown(value)`      | Replaces editor content            |
+| Method               | Description                         |
+| -------------------- | ----------------------------------- |
+| `focus()`            | Focus the editor                    |
+| `getMarkdown()`      | Returns current content as Markdown |
+| `setMarkdown(value)` | Replaces editor content             |
 
 ### Events
 
-| Event   | Fires when                                      |
-|---------|-------------------------------------------------|
-| `input` | On every content change (keystroke)             |
-| `change`| On blur if value changed since focus            |
-| `ready` | Once the editor has initialized                 |
+| Event    | Fires when                           |
+| -------- | ------------------------------------ |
+| `input`  | On every content change (keystroke)  |
+| `change` | On blur if value changed since focus |
+| `ready`  | Once the editor has initialized      |
 
 ### Form integration
 
@@ -89,26 +133,26 @@ npm install @opositatest/markdown-text-editor
 ```
 
 ```tsx
-import { MarkdownTextEditor } from '@opositatest/markdown-text-editor'
-import '@opositatest/markdown-text-editor/style'
+import { MarkdownTextEditor } from "@opositatest/markdown-text-editor";
+import "@opositatest/markdown-text-editor/style";
 
-<MarkdownTextEditor defaultValue="Hello" width="100%" height="320px" />
+<MarkdownTextEditor defaultValue="Hello" width="100%" height="320px" />;
 ```
 
 ### Props
 
-| Prop           | Type                                        | Description                                      |
-|----------------|---------------------------------------------|--------------------------------------------------|
-| `value`        | `string`                                    | Controlled Markdown value                        |
-| `defaultValue` | `string`                                    | Uncontrolled initial value                       |
-| `onChange`     | `(value: string) => void`                   | Called on every content change                   |
-| `onReady`      | `(handle: MarkdownTextEditorHandle) => void`| Called once editor has initialized               |
-| `placeholder`  | `string`                                    | Placeholder text shown when empty                |
-| `width`        | `string`                                    | CSS width for the editor container               |
-| `height`       | `string`                                    | CSS height for the editor container              |
-| `disabled`     | `boolean`                                   | Disables the editor                              |
-| `readonly`     | `boolean`                                   | Makes the editor read-only                       |
-| `className`    | `string`                                    | Additional CSS class on the editor container     |
+| Prop           | Type                                         | Description                                  |
+| -------------- | -------------------------------------------- | -------------------------------------------- |
+| `value`        | `string`                                     | Controlled Markdown value                    |
+| `defaultValue` | `string`                                     | Uncontrolled initial value                   |
+| `onChange`     | `(value: string) => void`                    | Called on every content change               |
+| `onReady`      | `(handle: MarkdownTextEditorHandle) => void` | Called once editor has initialized           |
+| `placeholder`  | `string`                                     | Placeholder text shown when empty            |
+| `width`        | `string`                                     | CSS width for the editor container           |
+| `height`       | `string`                                     | CSS height for the editor container          |
+| `disabled`     | `boolean`                                    | Disables the editor                          |
+| `readonly`     | `boolean`                                    | Makes the editor read-only                   |
+| `className`    | `string`                                     | Additional CSS class on the editor container |
 
 `width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
 
@@ -123,21 +167,21 @@ const ref = useRef<TMarkdownTextEditorHandle>(null)
 <MarkdownTextEditor ref={ref} defaultValue="Hello" onChange={setValue} />
 ```
 
-| Method                | Description                         |
-|-----------------------|-------------------------------------|
-| `ref.focus()`         | Focus the editor                    |
-| `ref.getMarkdown()`   | Returns current content as Markdown |
-| `ref.setMarkdown(v)`  | Replaces editor content             |
+| Method               | Description                         |
+| -------------------- | ----------------------------------- |
+| `ref.focus()`        | Focus the editor                    |
+| `ref.getMarkdown()`  | Returns current content as Markdown |
+| `ref.setMarkdown(v)` | Replaces editor content             |
 
 ---
 
 ## Package exports
 
-| Export                                   | Description                        |
-|------------------------------------------|------------------------------------|
-| `@opositatest/markdown-text-editor`      | React component + types            |
-| `@opositatest/markdown-text-editor/input`| Self-contained Web Component bundle |
-| `@opositatest/markdown-text-editor/style`| CSS stylesheet                     |
+| Export                                    | Description                         |
+| ----------------------------------------- | ----------------------------------- |
+| `@opositatest/markdown-text-editor`       | React component + types             |
+| `@opositatest/markdown-text-editor/input` | Self-contained Web Component bundle |
+| `@opositatest/markdown-text-editor/style` | CSS stylesheet                      |
 
 ## Browser support
 
