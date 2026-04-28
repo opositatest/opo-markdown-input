@@ -1,4 +1,4 @@
-name: Create Release
+name: 🚀 Release
 
 on:
   workflow_dispatch:
@@ -22,10 +22,10 @@ concurrency:
 
 jobs:
   release:
-    name: Bump Version, Tag & Release
+    name: 🚀 Publish release
     runs-on: ubuntu-latest
     steps:
-      - name: Validate branch
+      - name: ✅ Validate branch
         run: |
           if [ "$GITHUB_REF_NAME" != "main" ]; then
             echo "Run this workflow from main only. Current ref: $GITHUB_REF_NAME"
@@ -37,17 +37,17 @@ jobs:
           fetch-depth: 0
           ref: main
 
-      - name: Setup Node.js
+      - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Create release commit, tag and GitHub Release
+      - name: 🏷️ Create release commit, tag, and GitHub Release
         run: npm run release -- ${{ inputs.release_type }} --ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,12 +57,12 @@ jobs:
           GIT_COMMITTER_NAME: ${{ github.actor }}
           GIT_COMMITTER_EMAIL: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
 
-      - name: Publish to npm
+      - name: 📦 Publish to npm
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Setup Node.js for GitHub Packages
+      - name: 🟢 Setup Node.js for GitHub Packages
         uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
@@ -70,7 +70,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@opositatest'
 
-      - name: Publish to GitHub Packages
+      - name: 📦 Publish to GitHub Packages
         run: npm publish --registry https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
