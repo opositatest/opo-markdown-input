@@ -11,6 +11,8 @@ export type TMarkdownTextEditorProps = {
   disabled?: boolean
   readonly?: boolean
   placeholder?: string
+  width?: string
+  height?: string
   className?: string
   onReady?: (handle: TMarkdownTextEditorHandle) => void
 }

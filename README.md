@@ -19,6 +19,8 @@ Load via CDN (no build step required):
     name="body"
     value="Initial content"
     placeholder="Write here…"
+    width="100%"
+    height="320px"
     required
   ></markdown-text-editor>
 </form>
@@ -30,18 +32,24 @@ Load via CDN (no build step required):
 |---------------|---------|--------------------------------------------------|
 | `name`        | string  | Field name for form submission                   |
 | `value`       | string  | Initial Markdown value                           |
-| `placeholder` | string  | Placeholder text shown when empty               |
+| `placeholder` | string  | Placeholder text shown when empty                |
+| `width`       | string  | CSS width for the editor container               |
+| `height`      | string  | CSS height for the editor container              |
 | `disabled`    | boolean | Disables the editor                              |
 | `readonly`    | boolean | Makes the editor read-only                       |
 | `required`    | boolean | Participates in native form validation           |
 
+`width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
+
 ### Properties
 
-| Property       | Type    | Description                  |
-|----------------|---------|------------------------------|
-| `element.value`    | string  | Get or set Markdown content  |
-| `element.disabled` | boolean | Get or set disabled state    |
-| `element.readOnly` | boolean | Get or set read-only state   |
+| Property            | Type    | Description                         |
+|---------------------|---------|-------------------------------------|
+| `element.value`     | string  | Get or set Markdown content         |
+| `element.width`     | string  | Get or set CSS width                |
+| `element.height`    | string  | Get or set CSS height               |
+| `element.disabled`  | boolean | Get or set disabled state           |
+| `element.readOnly`  | boolean | Get or set read-only state          |
 
 ### Methods
 
@@ -74,20 +82,26 @@ npm install @opositatest/markdown-text-editor
 ```tsx
 import { MarkdownTextEditor } from '@opositatest/markdown-text-editor'
 import '@opositatest/markdown-text-editor/style'
+
+<MarkdownTextEditor defaultValue="Hello" width="100%" height="320px" />
 ```
 
 ### Props
 
-| Prop           | Type                              | Description                                      |
-|----------------|-----------------------------------|--------------------------------------------------|
-| `value`        | `string`                          | Controlled Markdown value                        |
-| `defaultValue` | `string`                          | Uncontrolled initial value                       |
-| `onChange`     | `(value: string) => void`         | Called on every content change                   |
-| `onReady`      | `(handle: MarkdownTextEditorHandle) => void` | Called once editor has initialized           |
-| `placeholder`  | `string`                          | Placeholder text shown when empty               |
-| `disabled`     | `boolean`                         | Disables the editor                              |
-| `readonly`     | `boolean`                         | Makes the editor read-only                       |
-| `className`    | `string`                          | Additional CSS class on the editor container     |
+| Prop           | Type                                        | Description                                      |
+|----------------|---------------------------------------------|--------------------------------------------------|
+| `value`        | `string`                                    | Controlled Markdown value                        |
+| `defaultValue` | `string`                                    | Uncontrolled initial value                       |
+| `onChange`     | `(value: string) => void`                   | Called on every content change                   |
+| `onReady`      | `(handle: MarkdownTextEditorHandle) => void`| Called once editor has initialized               |
+| `placeholder`  | `string`                                    | Placeholder text shown when empty                |
+| `width`        | `string`                                    | CSS width for the editor container               |
+| `height`       | `string`                                    | CSS height for the editor container              |
+| `disabled`     | `boolean`                                   | Disables the editor                              |
+| `readonly`     | `boolean`                                   | Makes the editor read-only                       |
+| `className`    | `string`                                    | Additional CSS class on the editor container     |
+
+`width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
 
 ### Imperative handle (via ref)
 

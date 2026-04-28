@@ -8,6 +8,8 @@ type MarkdownTextEditorProps = React.DetailedHTMLProps<
   name?: string
   value?: string
   placeholder?: string
+  width?: string
+  height?: string
   disabled?: boolean
   readonly?: boolean
   required?: boolean

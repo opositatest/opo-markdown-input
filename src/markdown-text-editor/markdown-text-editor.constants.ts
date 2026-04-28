@@ -5,6 +5,8 @@ export const MARKDOWN_TEXT_EDITOR_OBSERVED_ATTRIBUTES = [
   'name',
   'value',
   'placeholder',
+  'width',
+  'height',
   'disabled',
   'readonly',
   'required',

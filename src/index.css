@@ -80,10 +80,20 @@ markdown-text-editor[disabled] {
   background: transparent;
 }
 
+.markdown-text-editor__field[data-has-custom-height='true'] .bn-container,
+.markdown-text-editor__field[data-has-custom-height='true'] .bn-editor {
+  height: 100%;
+}
+
 .markdown-text-editor__field .bn-editor {
   min-height: 280px;
   padding: 1rem 1.1rem;
   color: var(--heading-color);
+}
+
+.markdown-text-editor__field[data-has-custom-height='true'] .bn-editor {
+  min-height: var(--markdown-text-editor-height);
+  overflow: auto;
 }
 
 .bn-container .bn-editor {

@@ -137,6 +137,22 @@ export class MarkdownTextEditorElement extends HTMLElement {
     this.reflectStringAttribute('placeholder', value)
   }
 
+  public get width(): string {
+    return this.getAttribute('width') ?? ''
+  }
+
+  public set width(value: string) {
+    this.reflectStringAttribute('width', value)
+  }
+
+  public get height(): string {
+    return this.getAttribute('height') ?? ''
+  }
+
+  public set height(value: string) {
+    this.reflectStringAttribute('height', value)
+  }
+
   public focus(): void {
     this.editorHandle?.focus()
   }
@@ -239,8 +255,10 @@ export class MarkdownTextEditorElement extends HTMLElement {
         ref={this.handleEditorRef}
         value={this.currentValue}
         disabled={this.disabled}
+        height={this.height}
         readonly={this.readOnly}
         placeholder={this.placeholder}
+        width={this.width}
         className={MARKDOWN_TEXT_EDITOR_FIELD_CLASS_NAME}
         onChange={this.handleEditorChange}
         onReady={this.handleEditorReady}
