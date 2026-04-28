@@ -1,21 +1,25 @@
-import { useRef, useState, type FormEvent, type ReactElement } from "react";
+import { useRef, useState, type FormEvent, type ReactElement } from 'react';
 
-import type { MarkdownTextEditorElement } from "../markdown-text-editor/markdown-text-editor-element";
+import type { MarkdownTextEditorElement } from '../markdown-text-editor/markdown-text-editor-element';
 import {
   BODY_EDITOR_HEIGHT,
   BODY_INITIAL_MARKDOWN,
+  DEMO_BADGES,
+  DEMO_HIGHLIGHTS,
   HOST_FORM_CHECKS,
+  INITIAL_SUBMITTED_DATA,
+  PROGRAMMATIC_SUMMARY_MARKDOWN,
   SUMMARY_EDITOR_HEIGHT,
   SUMMARY_INITIAL_MARKDOWN,
   SUMMARY_EDITOR_WIDTH,
-} from "./app.constants";
+} from './app.constants';
 
 type TSubmittedData = Record<string, FormDataEntryValue>;
 
 export function App(): ReactElement {
   const bodyRef = useRef<MarkdownTextEditorElement | null>(null);
   const summaryRef = useRef<MarkdownTextEditorElement | null>(null);
-  const [submittedData, setSubmittedData] = useState<TSubmittedData>({});
+  const [submittedData, setSubmittedData] = useState<TSubmittedData>(INITIAL_SUBMITTED_DATA);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -33,7 +37,7 @@ export function App(): ReactElement {
   }
 
   function handleProgrammaticSummaryUpdate(): void {
-    summaryRef.current?.setMarkdown("Resumen actualizado desde JavaScript");
+    summaryRef.current?.setMarkdown(PROGRAMMATIC_SUMMARY_MARKDOWN);
     summaryRef.current?.focus();
   }
 
@@ -41,72 +45,113 @@ export function App(): ReactElement {
     bodyRef.current?.focus();
   }
 
+  function renderBadge(item: string): ReactElement {
+    return (
+      <li key={item} className="badge-item">
+        {item}
+      </li>
+    );
+  }
+
+  function renderHighlight(item: string): ReactElement {
+    return <li key={item}>{item}</li>;
+  }
+
+  function renderHostFormCheck(item: string): ReactElement {
+    return <li key={item}>{item}</li>;
+  }
+
   return (
-    <div className="test-page">
-      <header className="test-header">
-        <div>
-          <p className="eyebrow">React 19 + Vite 8</p>
-          <h1>Draft to API Editor</h1>
-          <p className="lede">
-            El host prueba submit, reset, multiples instancias y cambios
-            programaticos del custom element.
-          </p>
+    <div className="demo-page">
+      <header className="panel hero-panel">
+        <div className="hero-layout">
+          <div>
+            <p className="eyebrow">Markdown Text Editor</p>
+            <h1>Polished authoring UI for forms, docs, and embedded workflows.</h1>
+            <p className="lede">
+              This demo shows the web component inside a regular host form with live
+              Markdown serialization, programmatic control, and isolated editor
+              instances.
+            </p>
+
+            <ul className="badge-list">{DEMO_BADGES.map(renderBadge)}</ul>
+          </div>
+
+          <section className="hero-card">
+            <p className="section-kicker">Demo goals</p>
+            <h2>Ready for a clean README screenshot</h2>
+            <ul className="result-list">{DEMO_HIGHLIGHTS.map(renderHighlight)}</ul>
+          </section>
         </div>
       </header>
 
-      <main className="test-layout">
-        <form className="html-form simple-form" onSubmit={handleSubmit}>
-          <section className="panel test-panel">
+      <main className="demo-layout">
+        <form className="demo-form" onSubmit={handleSubmit}>
+          <section className="panel editor-panel">
             <div className="panel-heading">
-              <h2>Formulario host</h2>
+              <p className="section-kicker">Live playground</p>
+              <h2>Compose an announcement</h2>
               <p>
-                Cada <code>{"<markdown-text-editor>"}</code> sincroniza su valor
-                Markdown con el formulario usando `ElementInternals` o un `input
-                type="hidden"` de fallback.
+                Use the fields below to test submit, reset, focus management, and
+                JavaScript-driven updates from the host page.
               </p>
             </div>
 
-            <label className="field-group">
-              <span>Body</span>
-              <markdown-text-editor
-                ref={handleBodyRef}
-                height={BODY_EDITOR_HEIGHT}
-                name="body"
-                value={BODY_INITIAL_MARKDOWN}
-                placeholder="Escribe el body..."
-              />
-            </label>
+            <div className="editor-grid">
+              <label className="field-group field-group-main">
+                <div className="field-heading">
+                  <span>Article body</span>
+                  <p className="field-copy">
+                    Long-form content with headings, lists, quotes, and display math.
+                  </p>
+                </div>
 
-            <label className="field-group">
-              <span>Summary</span>
-              <markdown-text-editor
-                ref={handleSummaryRef}
-                height={SUMMARY_EDITOR_HEIGHT}
-                name="summary"
-                value={SUMMARY_INITIAL_MARKDOWN}
-                placeholder="Escribe el resumen..."
-                width={SUMMARY_EDITOR_WIDTH}
-              />
-            </label>
+                <markdown-text-editor
+                  ref={handleBodyRef}
+                  height={BODY_EDITOR_HEIGHT}
+                  name="body"
+                  value={BODY_INITIAL_MARKDOWN}
+                  placeholder="Write the announcement body..."
+                />
+              </label>
+
+              <label className="field-group">
+                <div className="field-heading">
+                  <span>Summary</span>
+                  <p className="field-copy">
+                    Short description for previews, changelogs, or metadata fields.
+                  </p>
+                </div>
+
+                <markdown-text-editor
+                  ref={handleSummaryRef}
+                  height={SUMMARY_EDITOR_HEIGHT}
+                  name="summary"
+                  value={SUMMARY_INITIAL_MARKDOWN}
+                  placeholder="Write a concise summary..."
+                  width={SUMMARY_EDITOR_WIDTH}
+                />
+              </label>
+            </div>
 
             <div className="action-row">
-              <button type="submit">Submit del formulario</button>
+              <button type="submit">Submit form</button>
               <button type="reset" className="secondary-button">
-                Reset del formulario
+                Reset form
               </button>
               <button
                 type="button"
                 className="secondary-button"
                 onClick={handleProgrammaticSummaryUpdate}
               >
-                Cambio programatico
+                Inject summary via JS
               </button>
               <button
                 type="button"
                 className="secondary-button"
                 onClick={handleBodyFocus}
               >
-                Focus body
+                Focus body editor
               </button>
             </div>
           </section>
@@ -114,17 +159,15 @@ export function App(): ReactElement {
 
         <aside className="sidebar">
           <section className="panel compact-panel">
-            <h2>Resultado del submit</h2>
+            <p className="section-kicker">Current payload</p>
+            <h2>Serialized Markdown</h2>
             <pre>{JSON.stringify(submittedData, null, 2)}</pre>
           </section>
 
           <section className="panel compact-panel">
-            <h2>Checks del plan</h2>
-            <ul className="result-list">
-              {HOST_FORM_CHECKS.map((item) => {
-                return <li key={item}>{item}</li>;
-              })}
-            </ul>
+            <p className="section-kicker">Host integration</p>
+            <h2>What this page verifies</h2>
+            <ul className="result-list">{HOST_FORM_CHECKS.map(renderHostFormCheck)}</ul>
           </section>
         </aside>
       </main>
