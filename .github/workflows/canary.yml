@@ -1,0 +1,54 @@
+name: 🐤 Canary Release
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: canary-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  canary:
+    name: 🐤 Publish canary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🏷️ Stamp canary version
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          BASE=$(node -p "require('./package.json').version")
+          CANARY="${BASE}-canary.${SHA}"
+          npm version "${CANARY}" --no-git-tag-version
+          echo "CANARY_VERSION=${CANARY}" >> $GITHUB_ENV
+
+      - name: 🔨 Build package
+        run: npm run build:package
+
+      - name: 📦 Publish to npm (canary)
+        run: npm publish --tag canary --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 🟢 Setup Node.js for GitHub Packages
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@opositatest'
+
+      - name: 📦 Publish to GitHub Packages (canary)
+        run: npm publish --registry https://npm.pkg.github.com --tag canary
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
