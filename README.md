@@ -175,6 +175,58 @@ const ref = useRef<TMarkdownTextEditorHandle>(null)
 
 ---
 
+## Styling
+
+The component does **not** use Shadow DOM, so all its elements are part of the regular DOM and can be targeted freely from the host page's CSS.
+
+### CSS custom properties
+
+These properties are defined on the `markdown-text-editor` element and can be overridden at any level:
+
+| Property          | Default                    | Description                        |
+| ----------------- | -------------------------- | ---------------------------------- |
+| `--border-color`  | `rgba(15, 23, 42, 0.09)`   | Border of the editor field         |
+| `--heading-color` | `#0f172a`                  | Text color inside the editor       |
+
+```css
+/* Override for all instances */
+markdown-text-editor {
+  --border-color: #d1d5db;
+  --heading-color: #1f2937;
+}
+
+/* Override for a specific instance */
+#my-editor {
+  --border-color: #6366f1;
+}
+```
+
+### Targeting component classes
+
+Use these stable class names to override layout, size, fonts, or other visual properties:
+
+| Selector                              | Description                         |
+| ------------------------------------- | ----------------------------------- |
+| `.markdown-text-editor__field`        | Editor container (border, radius, background) |
+| `.markdown-text-editor__field .bn-editor` | Inner editing area (padding, min-height, font-size) |
+| `.bn-container .bn-editor`            | BlockNote root (font-family, line-height) |
+
+```css
+/* Adjust editor size and typography */
+.markdown-text-editor__field .bn-editor {
+  min-height: 400px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Remove border radius */
+.markdown-text-editor__field {
+  border-radius: 0.25rem;
+}
+```
+
+---
+
 ## Package exports
 
 | Export                                    | Description                         |

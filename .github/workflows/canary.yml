@@ -52,3 +52,21 @@ jobs:
         run: npm publish --registry https://npm.pkg.github.com --tag canary
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔗 Canary links
+        run: |
+          echo "## 🐤 Canary published: ${CANARY_VERSION}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### npm" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "npm install @opositatest/markdown-text-editor@${CANARY_VERSION}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### jsDelivr CDN" >> $GITHUB_STEP_SUMMARY
+          echo '```html' >> $GITHUB_STEP_SUMMARY
+          echo "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@opositatest/markdown-text-editor@${CANARY_VERSION}/dist/editor.css\" />" >> $GITHUB_STEP_SUMMARY
+          echo "<script type=\"module\" src=\"https://cdn.jsdelivr.net/npm/@opositatest/markdown-text-editor@${CANARY_VERSION}/dist/editor.js\"></script>" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### GitHub Packages" >> $GITHUB_STEP_SUMMARY
+          echo "https://github.com/opositatest/opo-markdown-input/pkgs/npm/markdown-text-editor" >> $GITHUB_STEP_SUMMARY
