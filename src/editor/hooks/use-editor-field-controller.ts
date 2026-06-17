@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useImperativeHandle, useRef, type ForwardedRef } from 'react'
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, type ForwardedRef } from 'react'
 
 import { useAppBlockNoteEditor } from '../../hooks/use-app-block-note-editor/use-app-block-note-editor'
 import { editorBlocksToMarkdown, markdownToEditorBlocks } from '../editor-field/editor-field-markdown'
@@ -7,7 +7,7 @@ import type {
   TMarkdownTextEditorProps,
   TMarkdownEditor,
 } from '../editor-field/editor-field.types'
-import { filterEditorSlashMenuItems } from '../editor-schema'
+import { filterEditorSlashMenuItems, getEditorSlashMenuItems } from '../editor-schema'
 
 type TUseEditorFieldControllerArgs = Pick<
   TMarkdownTextEditorProps,
@@ -105,11 +105,16 @@ export function useEditorFieldController(
     onChange?.(nextMarkdown)
   }, [markdownEditor, onChange])
 
+  const slashMenuItems = useMemo(
+    () => getEditorSlashMenuItems(editor as never),
+    [editor],
+  )
+
   const handleSuggestionMenuItems = useCallback(
     async (query: string): Promise<ReturnType<typeof filterEditorSlashMenuItems>> => {
-      return filterEditorSlashMenuItems(editor as never, query)
+      return filterEditorSlashMenuItems(editor as never, query, slashMenuItems)
     },
-    [editor],
+    [editor, slashMenuItems],
   )
 
   return {
