@@ -13,7 +13,7 @@ export function AppBlockNoteView(props: TAppBlockNoteViewProps): ReactElement {
       linkToolbar={false}
       slashMenu={false}
       sideMenu={false}
-      filePanel={false}
+      filePanel={true}
       tableHandles={false}
       emojiPicker={false}
     />
