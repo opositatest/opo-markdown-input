@@ -83,8 +83,7 @@ function createSlashMenuItems(editor: typeof editorSchema.BlockNoteEditor): Defa
       group: 'Basic blocks',
       aliases: ['quote', 'blockquote'],
       onItemClick: () => {
-        insertOrUpdateBlockForSlashMenu(editor, { type: 'paragraph' })
-        // BlockNote doesn't have a native blockquote block, use paragraph with styling
+        insertOrUpdateBlockForSlashMenu(editor, { type: 'quote' })
       },
     },
     {
@@ -102,7 +101,7 @@ function createSlashMenuItems(editor: typeof editorSchema.BlockNoteEditor): Defa
       group: 'Basic blocks',
       aliases: ['hr', 'divider', 'line', 'horizontalrule'],
       onItemClick: () => {
-        insertOrUpdateBlockForSlashMenu(editor, { type: 'horizontalRule' })
+        insertOrUpdateBlockForSlashMenu(editor, { type: 'divider' })
       },
     },
     // Media
@@ -153,10 +152,10 @@ function createSlashMenuItems(editor: typeof editorSchema.BlockNoteEditor): Defa
     },
     // Math
     {
-      title: 'Formula matematica',
-      subtext: 'Inserta una formula LaTeX renderizada con KaTeX',
+      title: 'Math Formula',
+      subtext: 'Insert LaTeX formula rendered with KaTeX',
       group: 'Media',
-      aliases: ['math', 'latex', 'katex', 'formula', 'ecuacion'],
+      aliases: ['math', 'latex', 'katex', 'formula', 'equation'],
       onItemClick: () => {
         insertOrUpdateBlockForSlashMenu(editor, { type: 'math' } as never)
       },
@@ -171,7 +170,7 @@ export function getEditorSlashMenuItems(
 }
 
 export function filterEditorSlashMenuItems(
-  editor: typeof editorSchema.BlockNoteEditor,
+  _editor: typeof editorSchema.BlockNoteEditor,
   query: string,
   items: DefaultReactSuggestionItem[],
 ): DefaultReactSuggestionItem[] {
