@@ -6,6 +6,14 @@ type TUseAppBlockNoteEditorOptions = {
   placeholder?: string
 }
 
+async function uploadFile(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result as string)
+    reader.readAsDataURL(file)
+  })
+}
+
 export function useAppBlockNoteEditor(
   options: TUseAppBlockNoteEditorOptions,
 ): ReturnType<typeof useCreateBlockNote> {
@@ -14,6 +22,7 @@ export function useAppBlockNoteEditor(
   return useCreateBlockNote(
     {
       schema: editorSchema,
+      uploadFile,
       placeholders: placeholder
         ? { default: placeholder, emptyDocument: placeholder }
         : undefined,
