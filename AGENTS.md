@@ -6,16 +6,18 @@ Compact guidance for OpenCode sessions in this repo.
 
 ```bash
 npm run dev                    # Start dev server (Vite, React harness)
-npm run build                  # Type-check + build React app only
+npm run build                  # tsc -b + vite build (React app only, not the web component)
 npm run build:web-component    # Build web component bundle (dist/editor.js + dist/editor.css)
 npm run build:react            # Build React entry only
 npm run build:package          # Build both web component + React (full package output)
 npm run typecheck              # tsc -b (no emit, just type-check)
 npm run lint                   # ESLint (flat config, TS+React)
-npm run release                # release-it: lint → typecheck → build:package → git tag → npm
+npm run release                # release-it: lint → typecheck → build:package → git tag + GitHub release
 ```
 
 No test suite exists.
+
+Requires Node 24 (`.node-version`).
 
 ## Architecture
 
@@ -23,7 +25,7 @@ This is a published npm package (`@opositatest/markdown-text-editor`) shipping a
 
 ### Build targets
 
-- **Web component**: `vite.web-component.config.ts` → `src/web-component-entry.ts` → `dist/editor.js` + `dist/editor.css`. Self-contained (no runtime imports), `cssCodeSplit: false`, `inlineDynamicImports: true`.
+- **Web component**: `vite.web-component.config.ts` → `src/web-component-entry.ts` → `dist/editor.js` + `dist/editor.css`. Self-contained (no runtime imports), `cssCodeSplit: false`, `codeSplitting: false`. An `esmMarker` plugin appends `export {};` to the output so the single-file bundle is a valid ESM module.
 - **React app**: `vite.react.config.ts` → `src/react-entry.ts` → published React component.
 - **Dev harness**: `vite.config.ts` → `src/main.tsx` → exercises the web component in a form context.
 
