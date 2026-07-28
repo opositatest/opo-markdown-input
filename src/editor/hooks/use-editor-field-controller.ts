@@ -11,7 +11,7 @@ import { filterEditorSlashMenuItems, getEditorSlashMenuItems } from '../editor-s
 
 type TUseEditorFieldControllerArgs = Pick<
   TMarkdownTextEditorProps,
-  'defaultValue' | 'onChange' | 'onReady' | 'placeholder' | 'value'
+  'defaultValue' | 'hiddenSlashMenuItems' | 'onChange' | 'onReady' | 'placeholder' | 'value'
 > & {
   ref: ForwardedRef<TMarkdownTextEditorHandle>
 }
@@ -25,7 +25,7 @@ type TUseEditorFieldControllerResult = {
 export function useEditorFieldController(
   args: TUseEditorFieldControllerArgs,
 ): TUseEditorFieldControllerResult {
-  const { defaultValue, onChange, onReady, placeholder, ref, value } = args
+  const { defaultValue, hiddenSlashMenuItems = [], onChange, onReady, placeholder, ref, value } = args
   const currentMarkdownRef = useRef(value ?? defaultValue ?? '')
   const applyingExternalValueRef = useRef(false)
   const editor = useAppBlockNoteEditor({ placeholder })
@@ -105,10 +105,13 @@ export function useEditorFieldController(
     onChange?.(nextMarkdown)
   }, [markdownEditor, onChange])
 
-  const slashMenuItems = useMemo(
-    () => getEditorSlashMenuItems(editor as never),
-    [editor],
-  )
+  const slashMenuItems = useMemo(() => {
+    const allItems = getEditorSlashMenuItems(editor as never)
+    if (hiddenSlashMenuItems.length === 0) {
+      return allItems
+    }
+    return allItems.filter((item) => !hiddenSlashMenuItems.includes(item.title))
+  }, [editor, hiddenSlashMenuItems])
 
   const handleSuggestionMenuItems = useCallback(
     async (query: string): Promise<ReturnType<typeof filterEditorSlashMenuItems>> => {

@@ -28,6 +28,7 @@ export class MarkdownTextEditorElement extends HTMLElement {
   private valueWhenFocused = ''
   private hasFocusWithin = false
   private readyDispatched = false
+  private _hiddenSlashMenuItems: string[] = []
 
   public constructor() {
     super()
@@ -78,6 +79,10 @@ export class MarkdownTextEditorElement extends HTMLElement {
 
     if (name === 'name') {
       this.attachFormResetListener()
+    }
+
+    if (name === 'hidden-slash-menu-items') {
+      this._hiddenSlashMenuItems = this.parseHiddenSlashMenuItems(newValue)
     }
 
     this.syncFormState()
@@ -151,6 +156,28 @@ export class MarkdownTextEditorElement extends HTMLElement {
 
   public set height(value: string) {
     this.reflectStringAttribute('height', value)
+  }
+
+  public get hiddenSlashMenuItems(): string[] {
+    return this._hiddenSlashMenuItems
+  }
+
+  public set hiddenSlashMenuItems(value: string[]) {
+    this._hiddenSlashMenuItems = value
+    this.renderReact()
+  }
+
+  public get formattingToolbar(): boolean {
+    return this.getAttribute('formatting-toolbar') !== 'false'
+  }
+
+  public set formattingToolbar(value: boolean) {
+    if (value) {
+      this.removeAttribute('formatting-toolbar')
+      return
+    }
+
+    this.setAttribute('formatting-toolbar', 'false')
   }
 
   public focus(): void {
@@ -260,6 +287,8 @@ export class MarkdownTextEditorElement extends HTMLElement {
         placeholder={this.placeholder}
         width={this.width}
         className={MARKDOWN_TEXT_EDITOR_FIELD_CLASS_NAME}
+        hiddenSlashMenuItems={this._hiddenSlashMenuItems}
+        formattingToolbar={this.formattingToolbar}
         onChange={this.handleEditorChange}
         onReady={this.handleEditorReady}
       />,
@@ -319,6 +348,23 @@ export class MarkdownTextEditorElement extends HTMLElement {
 
     this.readyDispatched = true
     this.dispatchEvent(new CustomEvent('ready', { bubbles: true, composed: true }))
+  }
+
+  private parseHiddenSlashMenuItems(value: string | null): string[] {
+    if (!value) {
+      return []
+    }
+
+    try {
+      const parsed = JSON.parse(value)
+      if (Array.isArray(parsed)) {
+        return parsed.filter((item): item is string => typeof item === 'string')
+      }
+    } catch {
+      // Invalid JSON, return empty array
+    }
+
+    return []
   }
 
   private handleFormReset = (): void => {

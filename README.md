@@ -81,18 +81,51 @@ Load via CDN (no build step required):
 
 ### Attributes
 
-| Attribute     | Type    | Description                            |
-| ------------- | ------- | -------------------------------------- |
-| `name`        | string  | Field name for form submission         |
-| `value`       | string  | Initial Markdown value                 |
-| `placeholder` | string  | Placeholder text shown when empty      |
-| `width`       | string  | CSS width for the editor container     |
-| `height`      | string  | CSS height for the editor container    |
-| `disabled`    | boolean | Disables the editor                    |
-| `readonly`    | boolean | Makes the editor read-only             |
-| `required`    | boolean | Participates in native form validation |
+| Attribute                   | Type    | Description                                      |
+| --------------------------- | ------- | ------------------------------------------------ |
+| `name`                      | string  | Field name for form submission                   |
+| `value`                     | string  | Initial Markdown value                           |
+| `placeholder`               | string  | Placeholder text shown when empty                |
+| `width`                     | string  | CSS width for the editor container               |
+| `height`                    | string  | CSS height for the editor container              |
+| `disabled`                  | boolean | Disables the editor                              |
+| `readonly`                  | boolean | Makes the editor read-only                       |
+| `required`                  | boolean | Participates in native form validation           |
+| `hidden-slash-menu-items`   | string  | JSON array of item titles to hide from slash menu |
+| `formatting-toolbar`        | boolean | Floating formatting toolbar on text selection (default: enabled, set to `false` to disable) |
 
 `width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
+
+#### Available slash menu item titles
+
+Use these exact titles in the `hidden-slash-menu-items` JSON array to hide specific items:
+
+| Title            | Group        | Description                    |
+| ---------------- | ------------ | ------------------------------ |
+| `Heading 1`      | Headings     | Top-level heading              |
+| `Heading 2`      | Headings     | Key section heading            |
+| `Heading 3`      | Headings     | Subsection and group heading   |
+| `Paragraph`      | Basic blocks | Plain text                     |
+| `Bullet List`    | Basic blocks | Create a simple bullet list    |
+| `Numbered List`  | Basic blocks | Create a list with numbering   |
+| `Checklist`      | Basic blocks | Track tasks with a checklist   |
+| `Blockquote`     | Basic blocks | Capture a quote                |
+| `Code Block`     | Basic blocks | Capture a code snippet         |
+| `Divider`        | Basic blocks | Visually divide blocks         |
+| `Image`          | Media        | Fullscreen image               |
+| `Video`          | Media        | Resizable video with caption   |
+| `Audio`          | Media        | Embed audio                    |
+| `File`           | Media        | Embed a file                   |
+| `Table`          | Media        | Create a table                 |
+| `Math Formula`   | Media        | Insert LaTeX formula           |
+
+**Example:** Hide Image, Video, Audio, File, Table, and Math Formula:
+
+```html
+<markdown-text-editor
+  hidden-slash-menu-items='["Image", "Video", "Audio", "File", "Table", "Math Formula"]'
+></markdown-text-editor>
+```
 
 ### Properties
 
@@ -103,6 +136,7 @@ Load via CDN (no build step required):
 | `element.height`   | string  | Get or set CSS height       |
 | `element.disabled` | boolean | Get or set disabled state   |
 | `element.readOnly` | boolean | Get or set read-only state  |
+| `element.formattingToolbar` | boolean | Get or set the floating formatting toolbar state |
 
 ### Methods
 
@@ -141,20 +175,24 @@ import "@opositatest/markdown-text-editor/style";
 
 ### Props
 
-| Prop           | Type                                         | Description                                  |
-| -------------- | -------------------------------------------- | -------------------------------------------- |
-| `value`        | `string`                                     | Controlled Markdown value                    |
-| `defaultValue` | `string`                                     | Uncontrolled initial value                   |
-| `onChange`     | `(value: string) => void`                    | Called on every content change               |
-| `onReady`      | `(handle: MarkdownTextEditorHandle) => void` | Called once editor has initialized           |
-| `placeholder`  | `string`                                     | Placeholder text shown when empty            |
-| `width`        | `string`                                     | CSS width for the editor container           |
-| `height`       | `string`                                     | CSS height for the editor container          |
-| `disabled`     | `boolean`                                    | Disables the editor                          |
-| `readonly`     | `boolean`                                    | Makes the editor read-only                   |
-| `className`    | `string`                                     | Additional CSS class on the editor container |
+| Prop                    | Type                                         | Description                                  |
+| ----------------------- | -------------------------------------------- | -------------------------------------------- |
+| `value`                 | `string`                                     | Controlled Markdown value                    |
+| `defaultValue`          | `string`                                     | Uncontrolled initial value                   |
+| `onChange`              | `(value: string) => void`                    | Called on every content change               |
+| `onReady`               | `(handle: MarkdownTextEditorHandle) => void` | Called once editor has initialized           |
+| `placeholder`           | `string`                                     | Placeholder text shown when empty            |
+| `width`                 | `string`                                     | CSS width for the editor container           |
+| `height`                | `string`                                     | CSS height for the editor container          |
+| `disabled`              | `boolean`                                    | Disables the editor                          |
+| `readonly`              | `boolean`                                    | Makes the editor read-only                   |
+| `className`             | `string`                                     | Additional CSS class on the editor container |
+| `hiddenSlashMenuItems`  | `string[]`                                   | Array of item titles to hide from slash menu |
+| `formattingToolbar`     | `boolean`                                    | Floating formatting toolbar on text selection (default: `true`) |
 
 `width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
+
+See the [Web Component section](#available-slash-menu-item-titles) for the list of available item titles.
 
 ### Imperative handle (via ref)
 
