@@ -118,6 +118,31 @@ describe('MarkdownTextEditorElement', () => {
       expect(el.getAttribute('width')).toBe('100%')
       expect(el.getAttribute('height')).toBe('400px')
     })
+
+    it('defaults formattingToolbar to true when attribute is absent', () => {
+      const el = createElement()
+      expect(el.formattingToolbar).toBe(true)
+      expect(el.hasAttribute('formatting-toolbar')).toBe(false)
+    })
+
+    it('reads formattingToolbar as false when attribute is "false"', () => {
+      const el = createElement({ 'formatting-toolbar': 'false' })
+      expect(el.formattingToolbar).toBe(false)
+    })
+
+    it('removes formatting-toolbar attribute when set to true', () => {
+      const el = createElement({ 'formatting-toolbar': 'false' })
+      el.formattingToolbar = true
+      expect(el.hasAttribute('formatting-toolbar')).toBe(false)
+      expect(el.formattingToolbar).toBe(true)
+    })
+
+    it('sets formatting-toolbar attribute to "false" when set to false', () => {
+      const el = createElement()
+      el.formattingToolbar = false
+      expect(el.getAttribute('formatting-toolbar')).toBe('false')
+      expect(el.formattingToolbar).toBe(false)
+    })
   })
 
   describe('attributeChangedCallback', () => {
@@ -143,6 +168,15 @@ describe('MarkdownTextEditorElement', () => {
       const el = createElement()
       el.setAttribute('hidden-slash-menu-items', '{"foo":"bar"}')
       expect(el.hiddenSlashMenuItems).toEqual([])
+    })
+
+    it('updates formattingToolbar when formatting-toolbar attribute changes', () => {
+      const el = createElement()
+      expect(el.formattingToolbar).toBe(true)
+      el.setAttribute('formatting-toolbar', 'false')
+      expect(el.formattingToolbar).toBe(false)
+      el.removeAttribute('formatting-toolbar')
+      expect(el.formattingToolbar).toBe(true)
     })
   })
 

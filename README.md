@@ -92,6 +92,7 @@ Load via CDN (no build step required):
 | `readonly`                  | boolean | Makes the editor read-only                       |
 | `required`                  | boolean | Participates in native form validation           |
 | `hidden-slash-menu-items`   | string  | JSON array of item titles to hide from slash menu |
+| `formatting-toolbar`        | boolean | Floating formatting toolbar on text selection (default: enabled, set to `false` to disable) |
 
 `width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
 
@@ -135,6 +136,7 @@ Use these exact titles in the `hidden-slash-menu-items` JSON array to hide speci
 | `element.height`   | string  | Get or set CSS height       |
 | `element.disabled` | boolean | Get or set disabled state   |
 | `element.readOnly` | boolean | Get or set read-only state  |
+| `element.formattingToolbar` | boolean | Get or set the floating formatting toolbar state |
 
 ### Methods
 
@@ -186,6 +188,7 @@ import "@opositatest/markdown-text-editor/style";
 | `readonly`              | `boolean`                                    | Makes the editor read-only                   |
 | `className`             | `string`                                     | Additional CSS class on the editor container |
 | `hiddenSlashMenuItems`  | `string[]`                                   | Array of item titles to hide from slash menu |
+| `formattingToolbar`     | `boolean`                                    | Floating formatting toolbar on text selection (default: `true`) |
 
 `width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
 

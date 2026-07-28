@@ -167,6 +167,19 @@ export class MarkdownTextEditorElement extends HTMLElement {
     this.renderReact()
   }
 
+  public get formattingToolbar(): boolean {
+    return this.getAttribute('formatting-toolbar') !== 'false'
+  }
+
+  public set formattingToolbar(value: boolean) {
+    if (value) {
+      this.removeAttribute('formatting-toolbar')
+      return
+    }
+
+    this.setAttribute('formatting-toolbar', 'false')
+  }
+
   public focus(): void {
     this.editorHandle?.focus()
   }
@@ -275,6 +288,7 @@ export class MarkdownTextEditorElement extends HTMLElement {
         width={this.width}
         className={MARKDOWN_TEXT_EDITOR_FIELD_CLASS_NAME}
         hiddenSlashMenuItems={this._hiddenSlashMenuItems}
+        formattingToolbar={this.formattingToolbar}
         onChange={this.handleEditorChange}
         onReady={this.handleEditorReady}
       />,

@@ -4,13 +4,17 @@ import type { ReactElement } from 'react'
 
 import type { TAppBlockNoteViewProps } from './app-block-note-view.types'
 
-export function AppBlockNoteView(props: TAppBlockNoteViewProps): ReactElement {
+export function AppBlockNoteView({
+  formattingToolbar = true,
+  linkToolbar = true,
+  ...props
+}: TAppBlockNoteViewProps): ReactElement {
   return (
     <BlockNoteView
       {...props}
       theme="light"
-      formattingToolbar={false}
-      linkToolbar={false}
+      formattingToolbar={formattingToolbar}
+      linkToolbar={linkToolbar}
       slashMenu={false}
       sideMenu={false}
       filePanel={true}
