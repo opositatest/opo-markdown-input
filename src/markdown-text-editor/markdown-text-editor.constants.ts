@@ -10,5 +10,6 @@ export const MARKDOWN_TEXT_EDITOR_OBSERVED_ATTRIBUTES = [
   'disabled',
   'readonly',
   'required',
+  'hidden-slash-menu-items',
 ] as const
 export const VALUE_MISSING_MESSAGE = 'Please fill out this field.'

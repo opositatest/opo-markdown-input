@@ -14,6 +14,7 @@ export type TMarkdownTextEditorProps = {
   width?: string
   height?: string
   className?: string
+  hiddenSlashMenuItems?: string[]
   onReady?: (handle: TMarkdownTextEditorHandle) => void
 }
 
