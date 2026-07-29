@@ -197,4 +197,20 @@ describe('editorBlocksToMarkdown', () => {
 
     expect(result).toBe('Text')
   })
+
+  it('trims trailing newline in latex so delimiters stay adjacent to content', () => {
+    const editor = createMockEditor()
+    const blocks = [{ type: 'math', props: { latex: 'x=\\frac{-b}{2a}\n' } }]
+    const result = editorBlocksToMarkdown(editor, blocks)
+
+    expect(result).toBe('$$\nx=\\frac{-b}{2a}\n$$')
+  })
+
+  it('trims surrounding whitespace in latex before serializing', () => {
+    const editor = createMockEditor()
+    const blocks = [{ type: 'math', props: { latex: '  E = mc^2  \n\n' } }]
+    const result = editorBlocksToMarkdown(editor, blocks)
+
+    expect(result).toBe('$$\nE = mc^2\n$$')
+  })
 })

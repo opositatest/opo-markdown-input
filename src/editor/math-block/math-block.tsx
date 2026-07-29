@@ -33,7 +33,7 @@ export function MathBlock({ latex, isEditable, updateLatex }: TMathBlockProps): 
   }, [isEditing, latex])
 
   function handleSave(): void {
-    updateLatex(value)
+    updateLatex(value.trim())
 
     if (value.trim()) {
       setIsEditing(false)

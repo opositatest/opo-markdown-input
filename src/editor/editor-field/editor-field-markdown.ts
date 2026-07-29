@@ -47,7 +47,7 @@ export function editorBlocksToMarkdown(
   for (const block of blocks) {
     if (block.type === 'math' && typeof block.props?.latex === 'string' && block.props.latex.trim()) {
       flushMarkdownBatch()
-      parts.push(`$$\n${block.props.latex}\n$$`)
+      parts.push(`$$\n${block.props.latex.trim()}\n$$`)
       continue
     }
 

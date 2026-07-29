@@ -57,6 +57,17 @@ describe('MathBlock', () => {
       expect(updateLatex).toHaveBeenCalledWith('E = mc^2')
     })
 
+    it('trims trailing newline from textarea value before saving', () => {
+      const updateLatex = vi.fn()
+      render(<MathBlock latex="" isEditable={true} updateLatex={updateLatex} />)
+
+      const textarea = screen.getByRole('textbox')
+      fireEvent.change(textarea, { target: { value: 'E = mc^2\n' } })
+      fireEvent.click(screen.getByText('Listo'))
+
+      expect(updateLatex).toHaveBeenCalledWith('E = mc^2')
+    })
+
     it('does not exit editing when value is empty after save', () => {
       const updateLatex = vi.fn()
       render(<MathBlock latex="" isEditable={true} updateLatex={updateLatex} />)
