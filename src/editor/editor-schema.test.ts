@@ -95,6 +95,30 @@ describe('getEditorSlashMenuItems', () => {
   })
 })
 
+describe('table slash menu item', () => {
+  it('inserts a table with non-empty row/cell content so ProseMirror accepts it', async () => {
+    const { insertOrUpdateBlockForSlashMenu } = await import('@blocknote/core/extensions')
+
+    const items = getEditorSlashMenuItems({} as never)
+    const tableItem = items.find((i) => i.title === 'Table')
+    expect(tableItem).toBeDefined()
+
+    tableItem!.onItemClick!()
+
+    expect(insertOrUpdateBlockForSlashMenu).toHaveBeenCalledWith(
+      {},
+      expect.objectContaining({
+        type: 'table',
+        content: expect.objectContaining({
+          type: 'tableContent',
+          headerRows: 1,
+          rows: expect.arrayContaining([expect.objectContaining({ cells: expect.any(Array) })]),
+        }),
+      }),
+    )
+  })
+})
+
 describe('filterEditorSlashMenuItems', () => {
   it('returns all items when query is empty', () => {
     const items = getEditorSlashMenuItems({} as never)

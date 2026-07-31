@@ -6,6 +6,8 @@ import type { ReactElement } from 'react'
 import { AppFormattingToolbar } from './app-formatting-toolbar'
 import type { TAppBlockNoteViewProps } from './app-block-note-view.types'
 
+import './app-block-note-view.css'
+
 export function AppBlockNoteView({
   children,
   formattingToolbar = true,
@@ -21,7 +23,7 @@ export function AppBlockNoteView({
       slashMenu={false}
       sideMenu={false}
       filePanel={true}
-      tableHandles={false}
+      tableHandles={true}
       emojiPicker={false}
     >
       {formattingToolbar && (

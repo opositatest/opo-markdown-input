@@ -123,6 +123,18 @@ describe('CustomSuggestionMenu', () => {
     expect(onItemClick).toHaveBeenCalledWith(items[1])
   })
 
+  it('prevents default on mouse down so the editor selection is not lost before the click fires', () => {
+    const items = [createItem({ title: 'Table', group: 'Media' })]
+
+    render(
+      <CustomSuggestionMenu items={items} selectedIndex={-1} onItemClick={vi.fn()} {...DEFAULT_PROPS} />,
+    )
+
+    const event = fireEvent.mouseDown(screen.getByText('Table'))
+    // fireEvent returns false when preventDefault() was called on the event.
+    expect(event).toBe(false)
+  })
+
   it('applies selected class to the correct item', () => {
     const items = [
       createItem({ title: 'Heading 1', group: 'Headings' }),

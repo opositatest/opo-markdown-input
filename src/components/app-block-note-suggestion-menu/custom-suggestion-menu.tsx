@@ -43,6 +43,9 @@ export function CustomSuggestionMenu(
                 className={`bn-suggestion-menu-item ${
                   props.selectedIndex === currentIndex ? 'bn-suggestion-menu-item-selected' : ''
                 }`}
+                onMouseDown={(event) => {
+                  event.preventDefault()
+                }}
                 onClick={() => {
                   props.onItemClick?.(item)
                 }}

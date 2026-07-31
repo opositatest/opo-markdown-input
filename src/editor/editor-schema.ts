@@ -147,7 +147,14 @@ function createSlashMenuItems(editor: typeof editorSchema.BlockNoteEditor): Defa
       group: 'Media',
       aliases: ['table', 'spreadsheet'],
       onItemClick: () => {
-        insertOrUpdateBlockForSlashMenu(editor, { type: 'table' })
+        insertOrUpdateBlockForSlashMenu(editor, {
+          type: 'table',
+          content: {
+            type: 'tableContent',
+            headerRows: 1,
+            rows: [{ cells: ['', '', ''] }, { cells: ['', '', ''] }],
+          } as never,
+        })
       },
     },
     // Math
