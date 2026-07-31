@@ -7,7 +7,12 @@ import type { ReactElement } from 'react'
 
 import { AppCreateLinkButton } from './app-create-link-button'
 
-const EXCLUDED_ITEM_KEYS = new Set(['createLinkButton', 'addCommentButton', 'addTiptapCommentButton'])
+const EXCLUDED_ITEM_KEYS = new Set([
+  'createLinkButton',
+  'addCommentButton',
+  'addTiptapCommentButton',
+  'colorStyleButton',
+])
 
 export function AppFormattingToolbar(props: FormattingToolbarProps): ReactElement {
   const items = getFormattingToolbarItems(props.blockTypeSelectItems).filter(
