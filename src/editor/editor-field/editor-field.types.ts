@@ -23,6 +23,10 @@ export type TMarkdownBlock = {
   type?: string
   props?: {
     latex?: string
+    url?: string
+    name?: string
+    previewWidth?: number
+    showPreview?: boolean
   }
 }
 
