@@ -6,6 +6,7 @@ type TMathBlockStyles = {
   doneButton: CSSProperties
   editorCanvas: CSSProperties
   textarea: CSSProperties
+  hint: CSSProperties
   sourcePreview: CSSProperties
   preview: CSSProperties
   previewEditable: CSSProperties
@@ -57,6 +58,13 @@ export const mathBlockStyles: TMathBlockStyles = {
     resize: 'vertical',
     outline: 'none',
     fontFamily: 'SFMono-Regular, SF Mono, Consolas, monospace',
+  },
+  hint: {
+    margin: 0,
+    padding: '6px 12px 10px',
+    fontSize: '12px',
+    lineHeight: 1.5,
+    color: '#64748b',
   },
   sourcePreview: {
     padding: '8px 12px',

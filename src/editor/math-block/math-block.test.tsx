@@ -20,7 +20,7 @@ describe('MathBlock', () => {
   describe('editing mode', () => {
     it('starts in editing mode when latex is empty', () => {
       render(<MathBlock latex="" isEditable={true} updateLatex={vi.fn()} />)
-      expect(screen.getByPlaceholderText('Escribe la formula en LaTeX')).toBeDefined()
+      expect(screen.getByPlaceholderText('Escribe la fórmula en LaTeX')).toBeDefined()
     })
 
     it('enters editing mode on preview click when editable', () => {
