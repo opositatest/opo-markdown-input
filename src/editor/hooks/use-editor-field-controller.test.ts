@@ -23,8 +23,8 @@ vi.mock('../editor-field/editor-field-markdown', () => ({
 
 vi.mock('../editor-schema', () => ({
   getEditorSlashMenuItems: vi.fn().mockReturnValue([
-    { title: 'Heading 1', group: 'Headings', aliases: ['h1'] },
-    { title: 'Paragraph', group: 'Basic blocks', aliases: ['p'] },
+    { id: 'heading-1', title: 'Encabezado 1', group: 'Encabezados', aliases: ['h1'] },
+    { id: 'paragraph', title: 'Párrafo', group: 'Bloques básicos', aliases: ['p'] },
   ]),
   filterEditorSlashMenuItems: vi.fn((_editor: unknown, query: string, items: unknown[]) => {
     if (!query) return items
@@ -149,12 +149,12 @@ describe('useEditorFieldController', () => {
     const { result } = renderHook(() =>
       useEditorFieldController({
         ref: { current: null },
-        hiddenSlashMenuItems: ['Heading 1'],
+        hiddenSlashMenuItems: ['heading-1'],
       }),
     )
 
     const items = await result.current.handleSuggestionMenuItems('')
-    expect(items).toEqual([expect.objectContaining({ title: 'Paragraph' })])
+    expect(items).toEqual([expect.objectContaining({ title: 'Párrafo' })])
   })
 
   it('returns all items when hiddenSlashMenuItems is empty', async () => {
@@ -176,7 +176,7 @@ describe('useEditorFieldController', () => {
       }),
     )
 
-    const items = await result.current.handleSuggestionMenuItems('heading')
-    expect(items).toEqual([expect.objectContaining({ title: 'Heading 1' })])
+    const items = await result.current.handleSuggestionMenuItems('encabezado')
+    expect(items).toEqual([expect.objectContaining({ title: 'Encabezado 1' })])
   })
 })

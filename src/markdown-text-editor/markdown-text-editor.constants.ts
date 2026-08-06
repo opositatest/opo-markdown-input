@@ -13,4 +13,4 @@ export const MARKDOWN_TEXT_EDITOR_OBSERVED_ATTRIBUTES = [
   'hidden-slash-menu-items',
   'formatting-toolbar',
 ] as const
-export const VALUE_MISSING_MESSAGE = 'Please fill out this field.'
+export const VALUE_MISSING_MESSAGE = 'Por favor, completa este campo.'

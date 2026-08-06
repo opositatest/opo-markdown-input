@@ -110,7 +110,7 @@ export function useEditorFieldController(
     if (hiddenSlashMenuItems.length === 0) {
       return allItems
     }
-    return allItems.filter((item) => !hiddenSlashMenuItems.includes(item.title))
+    return allItems.filter((item) => !hiddenSlashMenuItems.includes(item.id))
   }, [editor, hiddenSlashMenuItems])
 
   const handleSuggestionMenuItems = useCallback(
