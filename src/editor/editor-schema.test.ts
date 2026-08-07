@@ -32,6 +32,10 @@ vi.mock('./math-block/math-block-spec', () => ({
   mathBlockSpec: vi.fn().mockReturnValue({}),
 }))
 
+vi.mock('./image-block/image-block-spec', () => ({
+  imageBlockSpec: vi.fn().mockReturnValue({}),
+}))
+
 describe('getEditorSlashMenuItems', () => {
   it('returns an array of items', () => {
     const items = getEditorSlashMenuItems({} as never)

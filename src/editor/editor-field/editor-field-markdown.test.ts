@@ -110,7 +110,7 @@ describe('markdownToEditorBlocks', () => {
     ])
   })
 
-  it('parses a resized image line into an image block with previewWidth', () => {
+  it('parses a legacy resized image line into a plain image block, ignoring the width', () => {
     const editor = createMockEditor()
     const markdown = '<img src="https://example.com/cat.png" alt="A cat" width="320">'
     const result = markdownToEditorBlocks(editor, markdown)
@@ -118,13 +118,13 @@ describe('markdownToEditorBlocks', () => {
     expect(result).toEqual([
       {
         type: 'image',
-        props: { url: 'https://example.com/cat.png', name: 'A cat', previewWidth: 320, showPreview: true },
+        props: { url: 'https://example.com/cat.png', name: 'A cat' },
       },
     ])
     expect(editor.tryParseMarkdownToBlocks).not.toHaveBeenCalled()
   })
 
-  it('parses a resized image line without alt text', () => {
+  it('parses a legacy resized image line without alt text', () => {
     const editor = createMockEditor()
     const markdown = '<img src="https://example.com/cat.png" width="200">'
     const result = markdownToEditorBlocks(editor, markdown)
@@ -132,12 +132,12 @@ describe('markdownToEditorBlocks', () => {
     expect(result).toEqual([
       {
         type: 'image',
-        props: { url: 'https://example.com/cat.png', name: '', previewWidth: 200, showPreview: true },
+        props: { url: 'https://example.com/cat.png', name: '' },
       },
     ])
   })
 
-  it('unescapes attribute entities in resized image lines', () => {
+  it('unescapes attribute entities in legacy resized image lines', () => {
     const editor = createMockEditor()
     const markdown = '<img src="https://example.com/cat.png?a=1&amp;b=2" alt="&quot;Cat&quot; &amp; friends" width="150">'
     const result = markdownToEditorBlocks(editor, markdown)
@@ -148,14 +148,12 @@ describe('markdownToEditorBlocks', () => {
         props: {
           url: 'https://example.com/cat.png?a=1&b=2',
           name: '"Cat" & friends',
-          previewWidth: 150,
-          showPreview: true,
         },
       },
     ])
   })
 
-  it('parses mixed markdown, resized image and math blocks', () => {
+  it('parses mixed markdown, legacy resized image and math blocks', () => {
     const paragraphBlocks = [{ type: 'paragraph' }]
     const editor = createMockEditor({
       tryParseMarkdownToBlocks: vi.fn().mockReturnValue(paragraphBlocks),
@@ -166,7 +164,7 @@ describe('markdownToEditorBlocks', () => {
 
     expect(result).toEqual([
       { type: 'paragraph' },
-      { type: 'image', props: { url: 'https://example.com/cat.png', name: '', previewWidth: 320, showPreview: true } },
+      { type: 'image', props: { url: 'https://example.com/cat.png', name: '' } },
       { type: 'math', props: { latex: 'x^2' } },
       { type: 'paragraph' },
     ])
@@ -276,40 +274,7 @@ describe('editorBlocksToMarkdown', () => {
     expect(result).toBe('$$\nE = mc^2\n$$')
   })
 
-  it('serializes a resized image block as a raw <img> tag with its width', () => {
-    const editor = createMockEditor()
-    const blocks = [
-      { type: 'image', props: { url: 'https://example.com/cat.png', name: 'A cat', previewWidth: 320 } },
-    ]
-    const result = editorBlocksToMarkdown(editor, blocks)
-
-    expect(result).toBe('<img src="https://example.com/cat.png" alt="A cat" width="320">')
-  })
-
-  it('serializes a resized image block without alt when name is empty', () => {
-    const editor = createMockEditor()
-    const blocks = [{ type: 'image', props: { url: 'https://example.com/cat.png', previewWidth: 320 } }]
-    const result = editorBlocksToMarkdown(editor, blocks)
-
-    expect(result).toBe('<img src="https://example.com/cat.png" width="320">')
-  })
-
-  it('escapes attribute entities when serializing a resized image block', () => {
-    const editor = createMockEditor()
-    const blocks = [
-      {
-        type: 'image',
-        props: { url: 'https://example.com/cat.png?a=1&b=2', name: '"Cat" & friends', previewWidth: 320 },
-      },
-    ]
-    const result = editorBlocksToMarkdown(editor, blocks)
-
-    expect(result).toBe(
-      '<img src="https://example.com/cat.png?a=1&amp;b=2" alt="&quot;Cat&quot; &amp; friends" width="320">',
-    )
-  })
-
-  it('delegates an image block without previewWidth to editor.blocksToMarkdownLossy', () => {
+  it('delegates any image block to editor.blocksToMarkdownLossy', () => {
     const editor = createMockEditor({
       blocksToMarkdownLossy: vi.fn().mockReturnValue('![A cat](https://example.com/cat.png)'),
     })
@@ -319,48 +284,31 @@ describe('editorBlocksToMarkdown', () => {
     expect(result).toBe('![A cat](https://example.com/cat.png)')
   })
 
-  it('delegates an image block with showPreview false to editor.blocksToMarkdownLossy even with previewWidth set', () => {
-    const editor = createMockEditor({
-      blocksToMarkdownLossy: vi.fn().mockReturnValue('[cat.png](https://example.com/cat.png)'),
-    })
-    const blocks = [
-      {
-        type: 'image',
-        props: { url: 'https://example.com/cat.png', previewWidth: 320, showPreview: false },
-      },
-    ]
-    const result = editorBlocksToMarkdown(editor, blocks)
-
-    expect(result).toBe('[cat.png](https://example.com/cat.png)')
-  })
-
-  it('mixes resized images with regular markdown and math blocks', () => {
+  it('mixes image, regular markdown and math blocks', () => {
     const editor = createMockEditor({
       blocksToMarkdownLossy: vi.fn().mockReturnValue('Some text'),
     })
 
     const blocks = [
       { type: 'paragraph' },
-      { type: 'image', props: { url: 'https://example.com/cat.png', previewWidth: 320 } },
+      { type: 'image', props: { url: 'https://example.com/cat.png' } },
       { type: 'math', props: { latex: 'x^2' } },
     ]
     const result = editorBlocksToMarkdown(editor, blocks)
 
-    expect(result).toBe('Some text\n\n<img src="https://example.com/cat.png" width="320">\n\n$$\nx^2\n$$')
+    expect(result).toBe('Some text\n\n$$\nx^2\n$$')
   })
 
-  it('roundtrips a resized image block through export and import with the same previewWidth', () => {
-    const editor = createMockEditor()
-    const blocks = [{ type: 'image', props: { url: 'https://example.com/cat.png', name: 'A cat', previewWidth: 320 } }]
+  it('drops a manually fixed width when re-exporting a document loaded from legacy content', () => {
+    const editor = createMockEditor({
+      blocksToMarkdownLossy: vi.fn().mockReturnValue('![A cat](https://example.com/cat.png)'),
+    })
+    const legacyMarkdown = '<img src="https://example.com/cat.png" alt="A cat" width="320">'
 
-    const markdown = editorBlocksToMarkdown(editor, blocks)
-    const reimportedBlocks = markdownToEditorBlocks(editor, markdown)
+    const blocks = markdownToEditorBlocks(editor, legacyMarkdown)
+    const reexportedMarkdown = editorBlocksToMarkdown(editor, blocks)
 
-    expect(reimportedBlocks).toEqual([
-      {
-        type: 'image',
-        props: { url: 'https://example.com/cat.png', name: 'A cat', previewWidth: 320, showPreview: true },
-      },
-    ])
+    expect(reexportedMarkdown).toBe('![A cat](https://example.com/cat.png)')
+    expect(editor.blocksToMarkdownLossy).toHaveBeenCalledWith(blocks)
   })
 })

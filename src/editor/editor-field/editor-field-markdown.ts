@@ -5,13 +5,15 @@ type TMarkdownSegment =
   | { type: 'math'; value: string }
   | { type: 'image'; value: string }
 
-// Markdown (CommonMark) has no syntax for image width, so BlockNote's own
-// Markdown export/import roundtrip silently drops `previewWidth` set by the
-// resize handles. To keep a resized image's width across save/reload, image
-// blocks with a `previewWidth` are serialized as a standalone raw `<img>` tag
+// Images no longer support a manually fixed width (they're always rendered
+// responsive), so nothing in this editor writes a `<img width="N">` line anymore.
+// This regex/parser only exists to keep loading documents saved *before* that change:
+// Markdown (CommonMark) has no syntax for image width, so back when resizing was
+// supported, an image's `previewWidth` was serialized as a standalone raw `<img>` tag
 // (valid inline HTML in Markdown) instead of going through
-// `blocksToMarkdownLossy`/`tryParseMarkdownToBlocks`, mirroring how `math`
-// blocks bypass them for LaTeX fidelity below.
+// `blocksToMarkdownLossy`/`tryParseMarkdownToBlocks`, which silently drop it. On import
+// the width is intentionally ignored — the image just loads at its normal, responsive
+// size — and once such a document is saved again it won't contain this format anymore.
 const RESIZED_IMAGE_LINE_REGEX = /^<img\s+[^>]*\bwidth="\d+(?:\.\d+)?"[^>]*\/?>$/i
 const IMAGE_ATTR_REGEX = /(\w+)="([^"]*)"/g
 
@@ -67,40 +69,12 @@ export function editorBlocksToMarkdown(
       continue
     }
 
-    if (isResizedImageBlock(block)) {
-      flushMarkdownBatch()
-      parts.push(serializeResizedImageBlock(block))
-      continue
-    }
-
     markdownBatch.push(block)
   }
 
   flushMarkdownBatch()
 
   return parts.join('\n\n').trim()
-}
-
-function isResizedImageBlock(block: TMarkdownBlock): boolean {
-  const previewWidth = block.props?.previewWidth
-  return (
-    block.type === 'image' &&
-    typeof previewWidth === 'number' &&
-    Number.isFinite(previewWidth) &&
-    previewWidth > 0 &&
-    block.props?.showPreview !== false
-  )
-}
-
-function serializeResizedImageBlock(block: TMarkdownBlock): string {
-  const { url = '', name = '', previewWidth } = block.props ?? {}
-  const attrs = [`src="${escapeImageAttr(url)}"`]
-  if (name) {
-    attrs.push(`alt="${escapeImageAttr(name)}"`)
-  }
-  attrs.push(`width="${previewWidth}"`)
-
-  return `<img ${attrs.join(' ')}>`
 }
 
 function parseResizedImageLine(line: string): TMarkdownBlock | null {
@@ -110,8 +84,7 @@ function parseResizedImageLine(line: string): TMarkdownBlock | null {
   }
 
   const url = attrs.src
-  const previewWidth = Number(attrs.width)
-  if (!url || !Number.isFinite(previewWidth) || previewWidth <= 0) {
+  if (!url) {
     return null
   }
 
@@ -120,14 +93,8 @@ function parseResizedImageLine(line: string): TMarkdownBlock | null {
     props: {
       url,
       name: attrs.alt ?? '',
-      previewWidth,
-      showPreview: true,
     },
   }
-}
-
-function escapeImageAttr(value: string): string {
-  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;')
 }
 
 function unescapeImageAttr(value: string): string {

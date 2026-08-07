@@ -2,11 +2,13 @@ import { BlockNoteSchema, defaultBlockSpecs } from '@blocknote/core'
 import { filterSuggestionItems, insertOrUpdateBlockForSlashMenu } from '@blocknote/core/extensions'
 import { type DefaultReactSuggestionItem } from '@blocknote/react'
 import { mathBlockSpec } from './math-block/math-block-spec'
+import { imageBlockSpec } from './image-block/image-block-spec'
 
 export const editorSchema = BlockNoteSchema.create({
   blockSpecs: {
     ...defaultBlockSpecs,
     math: mathBlockSpec(),
+    image: imageBlockSpec(),
   },
 })
 
