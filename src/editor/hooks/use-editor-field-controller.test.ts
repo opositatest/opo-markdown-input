@@ -22,9 +22,13 @@ vi.mock('../editor-field/editor-field-markdown', () => ({
 }))
 
 vi.mock('../editor-schema', () => ({
+  DEFAULT_HIDDEN_SLASH_MENU_ITEM_IDS: ['video', 'audio', 'file'],
   getEditorSlashMenuItems: vi.fn().mockReturnValue([
     { id: 'heading-1', title: 'Encabezado 1', group: 'Encabezados', aliases: ['h1'] },
     { id: 'paragraph', title: 'Párrafo', group: 'Bloques básicos', aliases: ['p'] },
+    { id: 'video', title: 'Vídeo', group: 'Multimedia', aliases: ['video'] },
+    { id: 'audio', title: 'Audio', group: 'Multimedia', aliases: ['audio'] },
+    { id: 'file', title: 'Archivo', group: 'Multimedia', aliases: ['file'] },
   ]),
   filterEditorSlashMenuItems: vi.fn((_editor: unknown, query: string, items: unknown[]) => {
     if (!query) return items
@@ -178,5 +182,45 @@ describe('useEditorFieldController', () => {
 
     const items = await result.current.handleSuggestionMenuItems('encabezado')
     expect(items).toEqual([expect.objectContaining({ title: 'Encabezado 1' })])
+  })
+
+  it('hides video, audio, and file items by default', async () => {
+    const { result } = renderHook(() =>
+      useEditorFieldController({
+        ref: { current: null },
+      }),
+    )
+
+    const items = await result.current.handleSuggestionMenuItems('')
+    expect(items.map((item) => item.id)).not.toEqual(
+      expect.arrayContaining(['video', 'audio', 'file']),
+    )
+  })
+
+  it('re-enables only the ids listed in enabledMediaBlocks', async () => {
+    const { result } = renderHook(() =>
+      useEditorFieldController({
+        ref: { current: null },
+        enabledMediaBlocks: ['video'],
+      }),
+    )
+
+    const items = await result.current.handleSuggestionMenuItems('')
+    const ids = items.map((item) => item.id)
+    expect(ids).toContain('video')
+    expect(ids).not.toEqual(expect.arrayContaining(['audio', 'file']))
+  })
+
+  it('still hides an id re-enabled via enabledMediaBlocks if also listed in hiddenSlashMenuItems', async () => {
+    const { result } = renderHook(() =>
+      useEditorFieldController({
+        ref: { current: null },
+        enabledMediaBlocks: ['video'],
+        hiddenSlashMenuItems: ['video'],
+      }),
+    )
+
+    const items = await result.current.handleSuggestionMenuItems('')
+    expect(items.map((item) => item.id)).not.toContain('video')
   })
 })

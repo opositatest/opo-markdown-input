@@ -47,7 +47,7 @@ In the editor UI, the math block is available from the slash menu and can be fou
 
 ### Scope note
 
-This package documents and supports the text-oriented authoring experience above, including the custom math block. Advanced upstream BlockNote media and table flows are not currently part of the documented surface of this package.
+This package documents and supports the text-oriented authoring experience above, including the custom math block. Advanced upstream BlockNote media flows (video, audio, and file blocks) are not part of the documented, supported surface of this package, and are **hidden from the slash menu by default**. Enable them explicitly with `enabled-media-blocks` / `enabledMediaBlocks` if a host app needs them — see [Available slash menu item ids](#available-slash-menu-item-ids).
 
 ## Web Component
 
@@ -91,39 +91,48 @@ Load via CDN (no build step required):
 | `disabled`                  | boolean | Disables the editor                              |
 | `readonly`                  | boolean | Makes the editor read-only                       |
 | `required`                  | boolean | Participates in native form validation           |
-| `hidden-slash-menu-items`   | string  | JSON array of item titles to hide from slash menu |
+| `hidden-slash-menu-items`   | string  | JSON array of item ids to hide from the slash menu |
+| `enabled-media-blocks`      | string  | JSON array of item ids to re-enable; `video`, `audio`, and `file` are hidden from the slash menu by default (see [Scope note](#scope-note)) |
 | `formatting-toolbar`        | boolean | Floating formatting toolbar on text selection (default: enabled, set to `false` to disable) |
 
 `width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
 
-#### Available slash menu item titles
+#### Available slash menu item ids
 
-Use these exact titles in the `hidden-slash-menu-items` JSON array to hide specific items:
+Use these stable, English ids (not the localized, user-facing title) in the `hidden-slash-menu-items` / `enabled-media-blocks` JSON arrays:
 
-| Title            | Group        | Description                    |
-| ---------------- | ------------ | ------------------------------ |
-| `Heading 1`      | Headings     | Top-level heading              |
-| `Heading 2`      | Headings     | Key section heading            |
-| `Heading 3`      | Headings     | Subsection and group heading   |
-| `Paragraph`      | Basic blocks | Plain text                     |
-| `Bullet List`    | Basic blocks | Create a simple bullet list    |
-| `Numbered List`  | Basic blocks | Create a list with numbering   |
-| `Checklist`      | Basic blocks | Track tasks with a checklist   |
-| `Blockquote`     | Basic blocks | Capture a quote                |
-| `Code Block`     | Basic blocks | Capture a code snippet         |
-| `Divider`        | Basic blocks | Visually divide blocks         |
-| `Image`          | Media        | Fullscreen image               |
-| `Video`          | Media        | Resizable video with caption   |
-| `Audio`          | Media        | Embed audio                    |
-| `File`           | Media        | Embed a file                   |
-| `Table`          | Media        | Create a table                 |
-| `Math Formula`   | Media        | Insert LaTeX formula           |
+| Id               | Group        | Description                    | Visible by default |
+| ---------------- | ------------ | ------------------------------- | ------------------- |
+| `heading-1`      | Headings     | Top-level heading              | Yes                 |
+| `heading-2`      | Headings     | Key section heading            | Yes                 |
+| `heading-3`      | Headings     | Subsection and group heading   | Yes                 |
+| `paragraph`      | Basic blocks | Plain text                     | Yes                 |
+| `bullet-list`    | Basic blocks | Create a simple bullet list    | Yes                 |
+| `numbered-list`  | Basic blocks | Create a list with numbering   | Yes                 |
+| `checklist`      | Basic blocks | Track tasks with a checklist   | Yes                 |
+| `blockquote`     | Basic blocks | Capture a quote                | Yes                 |
+| `code-block`     | Basic blocks | Capture a code snippet         | Yes                 |
+| `divider`        | Basic blocks | Visually divide blocks         | Yes                 |
+| `image`          | Multimedia   | Fullscreen image               | Yes                 |
+| `video`          | Multimedia   | Resizable video with caption   | **No** — opt in via `enabled-media-blocks` |
+| `audio`          | Multimedia   | Embed audio                    | **No** — opt in via `enabled-media-blocks` |
+| `file`           | Multimedia   | Embed a file                   | **No** — opt in via `enabled-media-blocks` |
+| `table`          | Multimedia   | Create a table                 | Yes                 |
+| `math-formula`   | Multimedia   | Insert LaTeX formula           | Yes                 |
 
-**Example:** Hide Image, Video, Audio, File, Table, and Math Formula:
+**Example:** Hide the image and table items, on top of the media items that are already hidden by default:
 
 ```html
 <markdown-text-editor
-  hidden-slash-menu-items='["Image", "Video", "Audio", "File", "Table", "Math Formula"]'
+  hidden-slash-menu-items='["image", "table"]'
+></markdown-text-editor>
+```
+
+**Example:** Opt in to the video block while keeping audio and file hidden:
+
+```html
+<markdown-text-editor
+  enabled-media-blocks='["video"]'
 ></markdown-text-editor>
 ```
 
@@ -136,6 +145,8 @@ Use these exact titles in the `hidden-slash-menu-items` JSON array to hide speci
 | `element.height`   | string  | Get or set CSS height       |
 | `element.disabled` | boolean | Get or set disabled state   |
 | `element.readOnly` | boolean | Get or set read-only state  |
+| `element.hiddenSlashMenuItems` | string[] | Get or set the list of hidden slash menu item ids |
+| `element.enabledMediaBlocks` | string[] | Get or set the list of default-hidden media item ids to re-enable |
 | `element.formattingToolbar` | boolean | Get or set the floating formatting toolbar state |
 
 ### Methods
@@ -187,12 +198,13 @@ import "@opositatest/markdown-text-editor/style";
 | `disabled`              | `boolean`                                    | Disables the editor                          |
 | `readonly`              | `boolean`                                    | Makes the editor read-only                   |
 | `className`             | `string`                                     | Additional CSS class on the editor container |
-| `hiddenSlashMenuItems`  | `string[]`                                   | Array of item titles to hide from slash menu |
+| `hiddenSlashMenuItems`  | `string[]`                                   | Array of item ids to hide from the slash menu |
+| `enabledMediaBlocks`    | `string[]`                                   | Array of item ids to re-enable; `video`, `audio`, and `file` are hidden by default |
 | `formattingToolbar`     | `boolean`                                    | Floating formatting toolbar on text selection (default: `true`) |
 
 `width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
 
-See the [Web Component section](#available-slash-menu-item-titles) for the list of available item titles.
+See the [Web Component section](#available-slash-menu-item-ids) for the list of available item ids.
 
 ### Imperative handle (via ref)
 

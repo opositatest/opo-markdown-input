@@ -1,5 +1,9 @@
 import { describe, it, expect, vi } from 'vitest'
-import { getEditorSlashMenuItems, filterEditorSlashMenuItems } from './editor-schema'
+import {
+  DEFAULT_HIDDEN_SLASH_MENU_ITEM_IDS,
+  getEditorSlashMenuItems,
+  filterEditorSlashMenuItems,
+} from './editor-schema'
 
 vi.mock('@blocknote/core', () => ({
   BlockNoteSchema: {
@@ -107,6 +111,19 @@ describe('getEditorSlashMenuItems', () => {
     expect(groups).toContain('Encabezados')
     expect(groups).toContain('Bloques básicos')
     expect(groups).toContain('Multimedia')
+  })
+})
+
+describe('DEFAULT_HIDDEN_SLASH_MENU_ITEM_IDS', () => {
+  it('lists video, audio, and file as hidden-by-default item ids', () => {
+    expect(DEFAULT_HIDDEN_SLASH_MENU_ITEM_IDS).toEqual(['video', 'audio', 'file'])
+  })
+
+  it('only references ids that exist among the slash menu items', () => {
+    const ids = getEditorSlashMenuItems({} as never).map((item) => item.id)
+    for (const hiddenId of DEFAULT_HIDDEN_SLASH_MENU_ITEM_IDS) {
+      expect(ids).toContain(hiddenId)
+    }
   })
 })
 

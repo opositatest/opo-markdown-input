@@ -18,6 +18,16 @@ export const editorSchema = BlockNoteSchema.create({
  */
 export type SlashMenuItem = DefaultReactSuggestionItem & { id: string }
 
+/**
+ * Slash menu item ids hidden from the menu unless explicitly re-enabled via
+ * the `enabledMediaBlocks` prop. These wrap advanced upstream BlockNote media
+ * flows that are not part of the documented, supported surface of this
+ * package (see README's "Scope note").
+ */
+export const DEFAULT_HIDDEN_SLASH_MENU_ITEM_IDS = ['video', 'audio', 'file'] as const
+
+export type DefaultHiddenSlashMenuItemId = (typeof DEFAULT_HIDDEN_SLASH_MENU_ITEM_IDS)[number]
+
 function createSlashMenuItems(editor: typeof editorSchema.BlockNoteEditor): SlashMenuItem[] {
   return [
     // Headings
