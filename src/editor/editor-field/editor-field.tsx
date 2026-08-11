@@ -33,6 +33,7 @@ export const MarkdownTextEditor = forwardRef<TMarkdownTextEditorHandle, TMarkdow
     className,
     defaultValue,
     disabled = false,
+    enabledMediaBlocks = [],
     formattingToolbar = true,
     height,
     hiddenSlashMenuItems = [],
@@ -47,6 +48,7 @@ export const MarkdownTextEditor = forwardRef<TMarkdownTextEditorHandle, TMarkdow
 ): ReactElement {
   const { editor, handleBlockNoteChange, handleSuggestionMenuItems } = useEditorFieldController({
     defaultValue,
+    enabledMediaBlocks,
     hiddenSlashMenuItems,
     onChange,
     onReady,

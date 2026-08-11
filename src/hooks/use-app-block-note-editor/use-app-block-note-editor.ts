@@ -1,3 +1,4 @@
+import { es } from '@blocknote/core/locales'
 import { useCreateBlockNote } from '@blocknote/react'
 
 import { editorSchema } from '../../editor/editor-schema'
@@ -23,9 +24,9 @@ export function useAppBlockNoteEditor(
     {
       schema: editorSchema,
       uploadFile,
-      placeholders: placeholder
-        ? { default: placeholder, emptyDocument: placeholder }
-        : undefined,
+      dictionary: placeholder
+        ? { ...es, placeholders: { ...es.placeholders, default: placeholder, emptyDocument: placeholder } }
+        : es,
     },
     [placeholder],
   )

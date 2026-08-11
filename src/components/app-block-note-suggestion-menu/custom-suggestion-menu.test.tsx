@@ -123,6 +123,18 @@ describe('CustomSuggestionMenu', () => {
     expect(onItemClick).toHaveBeenCalledWith(items[1])
   })
 
+  it('prevents default on mouse down so the editor selection is not lost before the click fires', () => {
+    const items = [createItem({ title: 'Table', group: 'Media' })]
+
+    render(
+      <CustomSuggestionMenu items={items} selectedIndex={-1} onItemClick={vi.fn()} {...DEFAULT_PROPS} />,
+    )
+
+    const event = fireEvent.mouseDown(screen.getByText('Table'))
+    // fireEvent returns false when preventDefault() was called on the event.
+    expect(event).toBe(false)
+  })
+
   it('applies selected class to the correct item', () => {
     const items = [
       createItem({ title: 'Heading 1', group: 'Headings' }),
@@ -138,14 +150,14 @@ describe('CustomSuggestionMenu', () => {
     expect(menuItems[1].className).toContain('bn-suggestion-menu-item-selected')
   })
 
-  it('handles items with empty group as "Other"', () => {
+  it('handles items with empty group as "Otros"', () => {
     const items = [createItem({ title: 'Item', group: '' })]
 
     render(
       <CustomSuggestionMenu items={items} selectedIndex={-1} onItemClick={vi.fn()} {...DEFAULT_PROPS} />,
     )
 
-    expect(screen.getByText('Other')).toBeDefined()
+    expect(screen.getByText('Otros')).toBeDefined()
   })
 
   it('groups consecutive items with same group together', () => {

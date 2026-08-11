@@ -3,6 +3,19 @@ import type { TMarkdownBlock, TMarkdownEditor } from './editor-field.types'
 type TMarkdownSegment =
   | { type: 'markdown'; value: string }
   | { type: 'math'; value: string }
+  | { type: 'image'; value: string }
+
+// Images no longer support a manually fixed width (they're always rendered
+// responsive), so nothing in this editor writes a `<img width="N">` line anymore.
+// This regex/parser only exists to keep loading documents saved *before* that change:
+// Markdown (CommonMark) has no syntax for image width, so back when resizing was
+// supported, an image's `previewWidth` was serialized as a standalone raw `<img>` tag
+// (valid inline HTML in Markdown) instead of going through
+// `blocksToMarkdownLossy`/`tryParseMarkdownToBlocks`, which silently drop it. On import
+// the width is intentionally ignored — the image just loads at its normal, responsive
+// size — and once such a document is saved again it won't contain this format anymore.
+const RESIZED_IMAGE_LINE_REGEX = /^<img\s+[^>]*\bwidth="\d+(?:\.\d+)?"[^>]*\/?>$/i
+const IMAGE_ATTR_REGEX = /(\w+)="([^"]*)"/g
 
 export function markdownToEditorBlocks(
   editor: TMarkdownEditor,
@@ -12,6 +25,11 @@ export function markdownToEditorBlocks(
   const blocks = segments.flatMap((segment) => {
     if (segment.type === 'math') {
       return [{ type: 'math', props: { latex: segment.value } }]
+    }
+
+    if (segment.type === 'image') {
+      const block = parseResizedImageLine(segment.value)
+      return block ? [block] : []
     }
 
     if (!segment.value.trim()) {
@@ -47,7 +65,7 @@ export function editorBlocksToMarkdown(
   for (const block of blocks) {
     if (block.type === 'math' && typeof block.props?.latex === 'string' && block.props.latex.trim()) {
       flushMarkdownBatch()
-      parts.push(`$$\n${block.props.latex}\n$$`)
+      parts.push(`$$\n${block.props.latex.trim()}\n$$`)
       continue
     }
 
@@ -57,6 +75,30 @@ export function editorBlocksToMarkdown(
   flushMarkdownBatch()
 
   return parts.join('\n\n').trim()
+}
+
+function parseResizedImageLine(line: string): TMarkdownBlock | null {
+  const attrs: Record<string, string> = {}
+  for (const match of line.matchAll(IMAGE_ATTR_REGEX)) {
+    attrs[match[1]] = unescapeImageAttr(match[2])
+  }
+
+  const url = attrs.src
+  if (!url) {
+    return null
+  }
+
+  return {
+    type: 'image',
+    props: {
+      url,
+      name: attrs.alt ?? '',
+    },
+  }
+}
+
+function unescapeImageAttr(value: string): string {
+  return value.replace(/&quot;/g, '"').replace(/&amp;/g, '&')
 }
 
 function splitMarkdownSegments(markdown: string): TMarkdownSegment[] {
@@ -80,7 +122,9 @@ function splitMarkdownSegments(markdown: string): TMarkdownSegment[] {
   }
 
   for (const line of lines) {
-    if (line.trim() === '$$') {
+    const trimmedLine = line.trim()
+
+    if (trimmedLine === '$$') {
       if (mathLines) {
         segments.push({ type: 'math', value: mathLines.join('\n').trim() })
         mathLines = null
@@ -94,6 +138,12 @@ function splitMarkdownSegments(markdown: string): TMarkdownSegment[] {
 
     if (mathLines) {
       mathLines.push(line)
+      continue
+    }
+
+    if (RESIZED_IMAGE_LINE_REGEX.test(trimmedLine)) {
+      flushMarkdown()
+      segments.push({ type: 'image', value: trimmedLine })
       continue
     }
 

@@ -28,12 +28,12 @@ export function MathBlock({ latex, isEditable, updateLatex }: TMathBlockProps): 
         trust: true,
       })
     } catch {
-      previewRef.current.textContent = 'Invalid LaTeX'
+      previewRef.current.textContent = 'LaTeX inválido'
     }
   }, [isEditing, latex])
 
   function handleSave(): void {
-    updateLatex(value)
+    updateLatex(value.trim())
 
     if (value.trim()) {
       setIsEditing(false)
@@ -88,7 +88,7 @@ export function MathBlock({ latex, isEditable, updateLatex }: TMathBlockProps): 
     return (
       <div className="math-block-editor" style={mathBlockStyles.wrapper}>
         <div style={mathBlockStyles.toolbar}>
-          <span>MathQuill · Formula matematica</span>
+          <span>MathQuill · Fórmula matemática (LaTeX)</span>
           <button onClick={handleSave} style={mathBlockStyles.doneButton} type="button">
             Listo
           </button>
@@ -98,12 +98,17 @@ export function MathBlock({ latex, isEditable, updateLatex }: TMathBlockProps): 
           <textarea
             value={value}
             onChange={handleTextareaChange}
-            placeholder="Escribe la formula en LaTeX"
+            placeholder="Escribe la fórmula en LaTeX"
             spellCheck={false}
             rows={4}
             style={mathBlockStyles.textarea}
           />
         </div>
+
+        <p style={mathBlockStyles.hint}>
+          Usa sintaxis LaTeX. Ejemplos: <code>x^2</code>, <code>{'\\frac{a}{b}'}</code>,{' '}
+          <code>{'\\sqrt{x}'}</code>, <code>{'\\sum_{i=1}^{n}'}</code>
+        </p>
 
         {value.trim() && (
           <div style={mathBlockStyles.sourcePreview}>

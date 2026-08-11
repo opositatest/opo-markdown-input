@@ -7,11 +7,21 @@ import type {
   TMarkdownTextEditorProps,
   TMarkdownEditor,
 } from '../editor-field/editor-field.types'
-import { filterEditorSlashMenuItems, getEditorSlashMenuItems } from '../editor-schema'
+import {
+  DEFAULT_HIDDEN_SLASH_MENU_ITEM_IDS,
+  filterEditorSlashMenuItems,
+  getEditorSlashMenuItems,
+} from '../editor-schema'
 
 type TUseEditorFieldControllerArgs = Pick<
   TMarkdownTextEditorProps,
-  'defaultValue' | 'hiddenSlashMenuItems' | 'onChange' | 'onReady' | 'placeholder' | 'value'
+  | 'defaultValue'
+  | 'enabledMediaBlocks'
+  | 'hiddenSlashMenuItems'
+  | 'onChange'
+  | 'onReady'
+  | 'placeholder'
+  | 'value'
 > & {
   ref: ForwardedRef<TMarkdownTextEditorHandle>
 }
@@ -25,7 +35,16 @@ type TUseEditorFieldControllerResult = {
 export function useEditorFieldController(
   args: TUseEditorFieldControllerArgs,
 ): TUseEditorFieldControllerResult {
-  const { defaultValue, hiddenSlashMenuItems = [], onChange, onReady, placeholder, ref, value } = args
+  const {
+    defaultValue,
+    enabledMediaBlocks = [],
+    hiddenSlashMenuItems = [],
+    onChange,
+    onReady,
+    placeholder,
+    ref,
+    value,
+  } = args
   const currentMarkdownRef = useRef(value ?? defaultValue ?? '')
   const applyingExternalValueRef = useRef(false)
   const editor = useAppBlockNoteEditor({ placeholder })
@@ -107,11 +126,14 @@ export function useEditorFieldController(
 
   const slashMenuItems = useMemo(() => {
     const allItems = getEditorSlashMenuItems(editor as never)
-    if (hiddenSlashMenuItems.length === 0) {
-      return allItems
-    }
-    return allItems.filter((item) => !hiddenSlashMenuItems.includes(item.title))
-  }, [editor, hiddenSlashMenuItems])
+    return allItems.filter((item) => {
+      const isDefaultHidden =
+        DEFAULT_HIDDEN_SLASH_MENU_ITEM_IDS.includes(item.id as never) &&
+        !enabledMediaBlocks.includes(item.id)
+
+      return !isDefaultHidden && !hiddenSlashMenuItems.includes(item.id)
+    })
+  }, [editor, enabledMediaBlocks, hiddenSlashMenuItems])
 
   const handleSuggestionMenuItems = useCallback(
     async (query: string): Promise<ReturnType<typeof filterEditorSlashMenuItems>> => {

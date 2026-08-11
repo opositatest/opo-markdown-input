@@ -29,6 +29,7 @@ export class MarkdownTextEditorElement extends HTMLElement {
   private hasFocusWithin = false
   private readyDispatched = false
   private _hiddenSlashMenuItems: string[] = []
+  private _enabledMediaBlocks: string[] = []
 
   public constructor() {
     super()
@@ -82,7 +83,11 @@ export class MarkdownTextEditorElement extends HTMLElement {
     }
 
     if (name === 'hidden-slash-menu-items') {
-      this._hiddenSlashMenuItems = this.parseHiddenSlashMenuItems(newValue)
+      this._hiddenSlashMenuItems = this.parseStringArrayAttribute(newValue)
+    }
+
+    if (name === 'enabled-media-blocks') {
+      this._enabledMediaBlocks = this.parseStringArrayAttribute(newValue)
     }
 
     this.syncFormState()
@@ -164,6 +169,15 @@ export class MarkdownTextEditorElement extends HTMLElement {
 
   public set hiddenSlashMenuItems(value: string[]) {
     this._hiddenSlashMenuItems = value
+    this.renderReact()
+  }
+
+  public get enabledMediaBlocks(): string[] {
+    return this._enabledMediaBlocks
+  }
+
+  public set enabledMediaBlocks(value: string[]) {
+    this._enabledMediaBlocks = value
     this.renderReact()
   }
 
@@ -288,6 +302,7 @@ export class MarkdownTextEditorElement extends HTMLElement {
         width={this.width}
         className={MARKDOWN_TEXT_EDITOR_FIELD_CLASS_NAME}
         hiddenSlashMenuItems={this._hiddenSlashMenuItems}
+        enabledMediaBlocks={this._enabledMediaBlocks}
         formattingToolbar={this.formattingToolbar}
         onChange={this.handleEditorChange}
         onReady={this.handleEditorReady}
@@ -350,7 +365,7 @@ export class MarkdownTextEditorElement extends HTMLElement {
     this.dispatchEvent(new CustomEvent('ready', { bubbles: true, composed: true }))
   }
 
-  private parseHiddenSlashMenuItems(value: string | null): string[] {
+  private parseStringArrayAttribute(value: string | null): string[] {
     if (!value) {
       return []
     }

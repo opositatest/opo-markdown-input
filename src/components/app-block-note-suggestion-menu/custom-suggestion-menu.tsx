@@ -11,7 +11,7 @@ function groupItems(items: DefaultReactSuggestionItem[]): GroupedItems[] {
   let currentGroup: GroupedItems | null = null
 
   for (const item of items) {
-    const group = item.group || 'Other'
+    const group = item.group || 'Otros'
 
     if (!currentGroup || currentGroup.group !== group) {
       currentGroup = { group, items: [] }
@@ -43,6 +43,9 @@ export function CustomSuggestionMenu(
                 className={`bn-suggestion-menu-item ${
                   props.selectedIndex === currentIndex ? 'bn-suggestion-menu-item-selected' : ''
                 }`}
+                onMouseDown={(event) => {
+                  event.preventDefault()
+                }}
                 onClick={() => {
                   props.onItemClick?.(item)
                 }}

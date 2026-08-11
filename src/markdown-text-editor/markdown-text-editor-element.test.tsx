@@ -170,6 +170,23 @@ describe('MarkdownTextEditorElement', () => {
       expect(el.hiddenSlashMenuItems).toEqual([])
     })
 
+    it('parses enabled-media-blocks from JSON', () => {
+      const el = createElement()
+      el.setAttribute('enabled-media-blocks', '["video","audio"]')
+      expect(el.enabledMediaBlocks).toEqual(['video', 'audio'])
+    })
+
+    it('returns empty array for invalid enabled-media-blocks JSON', () => {
+      const el = createElement()
+      el.setAttribute('enabled-media-blocks', 'not-json')
+      expect(el.enabledMediaBlocks).toEqual([])
+    })
+
+    it('defaults enabledMediaBlocks to an empty array when attribute is absent', () => {
+      const el = createElement()
+      expect(el.enabledMediaBlocks).toEqual([])
+    })
+
     it('updates formattingToolbar when formatting-toolbar attribute changes', () => {
       const el = createElement()
       expect(el.formattingToolbar).toBe(true)

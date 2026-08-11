@@ -20,7 +20,7 @@ describe('MathBlock', () => {
   describe('editing mode', () => {
     it('starts in editing mode when latex is empty', () => {
       render(<MathBlock latex="" isEditable={true} updateLatex={vi.fn()} />)
-      expect(screen.getByPlaceholderText('Escribe la formula en LaTeX')).toBeDefined()
+      expect(screen.getByPlaceholderText('Escribe la fórmula en LaTeX')).toBeDefined()
     })
 
     it('enters editing mode on preview click when editable', () => {
@@ -52,6 +52,17 @@ describe('MathBlock', () => {
 
       const textarea = screen.getByRole('textbox')
       fireEvent.change(textarea, { target: { value: 'E = mc^2' } })
+      fireEvent.click(screen.getByText('Listo'))
+
+      expect(updateLatex).toHaveBeenCalledWith('E = mc^2')
+    })
+
+    it('trims trailing newline from textarea value before saving', () => {
+      const updateLatex = vi.fn()
+      render(<MathBlock latex="" isEditable={true} updateLatex={updateLatex} />)
+
+      const textarea = screen.getByRole('textbox')
+      fireEvent.change(textarea, { target: { value: 'E = mc^2\n' } })
       fireEvent.click(screen.getByText('Listo'))
 
       expect(updateLatex).toHaveBeenCalledWith('E = mc^2')
