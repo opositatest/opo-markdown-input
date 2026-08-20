@@ -78,14 +78,20 @@ describe('MathBlock', () => {
       expect(screen.getByRole('textbox')).toBeDefined()
     })
 
-    it('shows source preview when value is non-empty', () => {
+    it('renders live formula preview when value is non-empty', () => {
       const { container } = render(
         <MathBlock latex="" isEditable={true} updateLatex={vi.fn()} />,
       )
       const textarea = screen.getByRole('textbox')
       fireEvent.change(textarea, { target: { value: 'x^2' } })
-      const code = container.querySelector('code')
-      expect(code?.textContent).toBe('x^2')
+
+      const preview = container.querySelector('.math-block-editing-preview')
+      expect(preview).not.toBeNull()
+      expect(katex.render).toHaveBeenCalledWith(
+        'x^2',
+        preview,
+        expect.objectContaining({ displayMode: true }),
+      )
     })
   })
 
