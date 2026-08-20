@@ -6,6 +6,7 @@ import {
 import type { ReactElement } from 'react'
 
 import { AppCreateLinkButton } from './app-create-link-button'
+import { FloatingPortal } from './floating-portal'
 
 const EXCLUDED_ITEM_KEYS = new Set([
   'createLinkButton',
@@ -20,9 +21,11 @@ export function AppFormattingToolbar(props: FormattingToolbarProps): ReactElemen
   )
 
   return (
-    <FormattingToolbar>
-      {items}
-      <AppCreateLinkButton key="appCreateLinkButton" />
-    </FormattingToolbar>
+    <FloatingPortal>
+      <FormattingToolbar>
+        {items}
+        <AppCreateLinkButton key="appCreateLinkButton" />
+      </FormattingToolbar>
+    </FloatingPortal>
   )
 }

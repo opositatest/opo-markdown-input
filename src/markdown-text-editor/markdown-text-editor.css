@@ -12,7 +12,6 @@ markdown-text-editor[disabled] {
   border: 1px solid var(--border-color);
   border-radius: 1.25rem;
   background: #ffffff;
-  overflow: hidden;
 }
 
 .markdown-text-editor__field[data-readonly='true'] {
@@ -32,6 +31,8 @@ markdown-text-editor[disabled] {
   min-height: 280px;
   padding: 1rem 1.1rem;
   color: var(--heading-color);
+  border-radius: 1.25rem;
+  overflow: hidden;
 }
 
 .markdown-text-editor__field[data-has-custom-height='true'] .bn-editor {
