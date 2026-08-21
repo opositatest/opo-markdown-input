@@ -1,6 +1,8 @@
 import { useLayoutEffect, useRef, useState, type ReactElement, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
+const FLOATING_SYNC_EPSILON_PX = 0.5
+
 /**
  * BlockNote's floating toolbars (formatting toolbar, link toolbar, and the
  * popovers they open, e.g. "Editar enlace") render inline wherever their
@@ -55,13 +57,35 @@ export function FloatingPortal({ children }: { children: ReactNode }): ReactElem
       }
     }
 
+    const lastPosition = { top: Number.NaN, left: Number.NaN }
     const syncPosition = (): void => {
       const box = positioned.getBoundingClientRect()
+
+      if (
+        Math.abs(box.top - lastPosition.top) < FLOATING_SYNC_EPSILON_PX &&
+        Math.abs(box.left - lastPosition.left) < FLOATING_SYNC_EPSILON_PX
+      ) {
+        return
+      }
+
+      lastPosition.top = box.top
+      lastPosition.left = box.left
       setPosition({ top: box.top, left: box.left })
     }
 
+    const lastSpacerSize = { width: Number.NaN, height: Number.NaN }
     const syncSpacerSize = (): void => {
       const box = content.getBoundingClientRect()
+
+      if (
+        Math.abs(box.width - lastSpacerSize.width) < FLOATING_SYNC_EPSILON_PX &&
+        Math.abs(box.height - lastSpacerSize.height) < FLOATING_SYNC_EPSILON_PX
+      ) {
+        return
+      }
+
+      lastSpacerSize.width = box.width
+      lastSpacerSize.height = box.height
       spacer.style.width = `${box.width}px`
       spacer.style.height = `${box.height}px`
     }
@@ -74,16 +98,15 @@ export function FloatingPortal({ children }: { children: ReactNode }): ReactElem
     positioned.style.visibility = 'hidden'
     positioned.style.pointerEvents = 'none'
 
-    // The portalled content's size can change (e.g. the "Editar enlace"
-    // sub-popover opening) and floating-ui repositions the original on
-    // scroll/resize (`autoUpdate`) - both need to stay in sync.
-    const resizeObserver = new ResizeObserver(() => {
-      syncSpacerSize()
-      syncPosition()
-    })
+    // Only the portalled content determines the spacer's size. Observing
+    // `positioned` here would create a feedback loop because changing the
+    // spacer resizes that element; floating-ui already observes and
+    // repositions it through `autoUpdate`.
+    const resizeObserver = new ResizeObserver(syncSpacerSize)
     resizeObserver.observe(content)
-    resizeObserver.observe(positioned)
 
+    // A style mutation means floating-ui has finished writing its position,
+    // so this avoids reading an intermediate position during a resize.
     const mutationObserver = new MutationObserver(syncPosition)
     mutationObserver.observe(positioned, { attributes: true, attributeFilter: ['style'] })
 
