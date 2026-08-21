@@ -7,7 +7,7 @@ type TMathBlockStyles = {
   editorCanvas: CSSProperties
   textarea: CSSProperties
   hint: CSSProperties
-  sourcePreview: CSSProperties
+  renderedPreview: CSSProperties
   preview: CSSProperties
   previewEditable: CSSProperties
   previewHovered: CSSProperties
@@ -66,13 +66,14 @@ export const mathBlockStyles: TMathBlockStyles = {
     lineHeight: 1.5,
     color: '#64748b',
   },
-  sourcePreview: {
-    padding: '8px 12px',
+  renderedPreview: {
+    padding: '16px 12px',
     borderTop: '1px solid rgba(15, 23, 42, 0.1)',
     background: '#f8fafc',
-    fontSize: '11px',
-    fontFamily: 'monospace',
-    color: '#64748b',
+    minHeight: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     overflow: 'auto',
   },
   preview: {

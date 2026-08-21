@@ -10,27 +10,40 @@ export function MathBlock({ latex, isEditable, updateLatex }: TMathBlockProps): 
   const [isHovered, setIsHovered] = useState(false)
   const [value, setValue] = useState(latex)
   const previewRef = useRef<HTMLDivElement>(null)
+  const editingPreviewRef = useRef<HTMLDivElement>(null)
+
+  function renderLatexInto(target: HTMLDivElement, source: string): void {
+    if (!source.trim()) {
+      target.textContent = ''
+      return
+    }
+
+    try {
+      katex.render(source, target, {
+        displayMode: true,
+        throwOnError: false,
+        trust: true,
+      })
+    } catch {
+      target.textContent = 'LaTeX inválido'
+    }
+  }
 
   useEffect(() => {
     if (isEditing || !previewRef.current) {
       return
     }
 
-    if (!latex.trim()) {
-      previewRef.current.textContent = ''
+    renderLatexInto(previewRef.current, latex)
+  }, [isEditing, latex])
+
+  useEffect(() => {
+    if (!isEditing || !editingPreviewRef.current) {
       return
     }
 
-    try {
-      katex.render(latex, previewRef.current, {
-        displayMode: true,
-        throwOnError: false,
-        trust: true,
-      })
-    } catch {
-      previewRef.current.textContent = 'LaTeX inválido'
-    }
-  }, [isEditing, latex])
+    renderLatexInto(editingPreviewRef.current, value)
+  }, [isEditing, value])
 
   function handleSave(): void {
     updateLatex(value.trim())
@@ -111,9 +124,11 @@ export function MathBlock({ latex, isEditable, updateLatex }: TMathBlockProps): 
         </p>
 
         {value.trim() && (
-          <div style={mathBlockStyles.sourcePreview}>
-            <code>{value}</code>
-          </div>
+          <div
+            ref={editingPreviewRef}
+            className="math-block-editing-preview"
+            style={mathBlockStyles.renderedPreview}
+          />
         )}
       </div>
     )

@@ -5,6 +5,9 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'happy-dom',
+    // Needed so `import css from './foo.css?raw'` resolves to the real
+    // stylesheet instead of an empty string (Vitest stubs CSS by default).
+    css: true,
     globals: true,
     setupFiles: ['./src/test-setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
