@@ -97,6 +97,15 @@ Load via CDN (no build step required):
 
 `width` and `height` accept any valid CSS size, such as `320px`, `40rem`, or `100%`.
 
+### Formatting toolbar
+
+Selecting text opens the formatting toolbar. Its **Quitar formato** action converts selected
+text blocks to paragraphs and removes inline styles, colors, code formatting, and links in one
+undoable operation. Non-text blocks such as images, tables, and formulas are left unchanged.
+
+The action tooltip also shows the browser shortcut for pasting without source formatting:
+`Ctrl/⌘ + Shift + V`.
+
 #### Available slash menu item ids
 
 Use these stable, English ids (not the localized, user-facing title) in the `hidden-slash-menu-items` / `enabled-media-blocks` JSON arrays:

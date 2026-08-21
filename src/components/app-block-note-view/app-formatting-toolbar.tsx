@@ -5,6 +5,7 @@ import {
 } from '@blocknote/react'
 import type { ReactElement } from 'react'
 
+import { AppClearFormattingButton } from './app-clear-formatting-button'
 import { AppCreateLinkButton } from './app-create-link-button'
 import { FloatingPortal } from './floating-portal'
 
@@ -24,6 +25,7 @@ export function AppFormattingToolbar(props: FormattingToolbarProps): ReactElemen
     <FloatingPortal>
       <FormattingToolbar>
         {items}
+        <AppClearFormattingButton key="appClearFormattingButton" />
         <AppCreateLinkButton key="appCreateLinkButton" />
       </FormattingToolbar>
     </FloatingPortal>
