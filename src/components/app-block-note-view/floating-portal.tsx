@@ -93,11 +93,6 @@ export function FloatingPortal({ children }: { children: ReactNode }): ReactElem
     syncSpacerSize()
     syncPosition()
 
-    // Keep floating-ui's own element measurable (for `flip`/`shift`) while
-    // hiding it - the real, interactive content now lives in the portal.
-    positioned.style.visibility = 'hidden'
-    positioned.style.pointerEvents = 'none'
-
     // Only the portalled content determines the spacer's size. Observing
     // `positioned` here would create a feedback loop because changing the
     // spacer resizes that element; floating-ui already observes and
@@ -113,8 +108,6 @@ export function FloatingPortal({ children }: { children: ReactNode }): ReactElem
     return () => {
       resizeObserver.disconnect()
       mutationObserver.disconnect()
-      positioned.style.visibility = ''
-      positioned.style.pointerEvents = ''
     }
   }, [])
 

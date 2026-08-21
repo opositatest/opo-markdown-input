@@ -1,5 +1,5 @@
 import { LinkToolbar, type LinkToolbarProps } from '@blocknote/react'
-import type { ReactElement } from 'react'
+import type { MouseEvent, ReactElement } from 'react'
 
 import { FloatingPortal } from './floating-portal'
 
@@ -7,9 +7,24 @@ import { FloatingPortal } from './floating-portal'
 // hover bar, and the "Editar enlace" popover it opens), wrapped so it
 // escapes ancestor `overflow`/stacking issues - see `floating-portal.tsx`.
 export function AppLinkToolbar(props: LinkToolbarProps): ReactElement {
+  function handleMouseEnter(): void {
+    props.setToolbarPositionFrozen?.(true)
+  }
+
+  function handleMouseLeave(event: MouseEvent<HTMLDivElement>): void {
+    if (event.currentTarget.querySelector('[aria-expanded="true"]')) {
+      return
+    }
+
+    props.setToolbarPositionFrozen?.(false)
+    props.setToolbarOpen?.(false)
+  }
+
   return (
     <FloatingPortal>
-      <LinkToolbar {...props} />
+      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <LinkToolbar {...props} />
+      </div>
     </FloatingPortal>
   )
 }

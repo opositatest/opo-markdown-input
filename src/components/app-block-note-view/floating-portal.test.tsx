@@ -109,7 +109,7 @@ describe('FloatingPortal', () => {
     expect(positioned.textContent).not.toContain('Editar enlace')
   })
 
-  it('hides the original positioned element without collapsing its measured size', () => {
+  it('keeps the original positioned element interactive for Floating UI hover tracking', () => {
     const container = document.createElement('div')
     container.className = 'bn-container light bn-mantine'
     document.body.appendChild(container)
@@ -120,11 +120,11 @@ describe('FloatingPortal', () => {
 
     render(<FloatingPortal>content</FloatingPortal>, { container: positioned })
 
-    // `visibility: hidden` (not `display: none`) keeps floating-ui able to
-    // measure the element for its `flip`/`shift` middleware, while making
-    // sure it neither shows nor intercepts clicks in its original spot.
-    expect(positioned.style.visibility).toBe('hidden')
-    expect(positioned.style.pointerEvents).toBe('none')
+    // The positioned element contains only the invisible spacer. Hiding it or
+    // disabling pointer events makes Floating UI observe a synthetic
+    // mouseleave and close the portalled toolbar.
+    expect(positioned.style.visibility).toBe('')
+    expect(positioned.style.pointerEvents).toBe('')
   })
 
   it("mirrors the nearest .bn-container's theme class and color scheme onto the portalled content", () => {
