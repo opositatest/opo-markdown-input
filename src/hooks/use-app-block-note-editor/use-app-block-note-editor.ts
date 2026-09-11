@@ -2,6 +2,7 @@ import { es } from '@blocknote/core/locales'
 import { useCreateBlockNote } from '@blocknote/react'
 
 import { editorSchema } from '../../editor/editor-schema'
+import { noTabIndentationExtension } from '../../editor/no-tab-indentation'
 
 type TUseAppBlockNoteEditorOptions = {
   placeholder?: string
@@ -23,6 +24,7 @@ export function useAppBlockNoteEditor(
   return useCreateBlockNote(
     {
       schema: editorSchema,
+      extensions: [noTabIndentationExtension],
       uploadFile,
       dictionary: placeholder
         ? { ...es, placeholders: { ...es.placeholders, default: placeholder, emptyDocument: placeholder } }
