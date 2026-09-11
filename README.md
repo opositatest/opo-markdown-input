@@ -30,8 +30,26 @@ The editor currently focuses on text-first rich content that serializes cleanly 
 - Block quotes
 - Code blocks
 - Links
+- Tables
 - Inline styles: bold, italic, underline, strikethrough, and inline code
 - Display math blocks written in LaTeX
+
+Indented / nested blocks are **not** part of the supported surface: `Tab` never indents (see [Tab key](#tab-key)).
+
+### Tab key
+
+`Tab` behaves like it does in any other form control: it moves focus to the next focusable element of the
+host page (`Shift-Tab` moves to the previous one), so it never indents a block or uses the browser's focus as a
+trap. `Escape` still blurs the editor.
+
+The only exceptions are BlockNote's own behaviours *inside* a block:
+
+- **Code blocks**: `Tab` inserts two spaces. `Shift-Tab` leaves the editor.
+- **Tables**: `Tab` / `Shift-Tab` move between cells. At the first/last cell they leave the editor instead of
+  indenting the table.
+
+Markdown that already contains nested lists (pasted content or a document saved before this rule) is still
+parsed and re-exported unchanged, but indentation can no longer be created from the keyboard.
 
 ### Math / LaTeX blocks
 
