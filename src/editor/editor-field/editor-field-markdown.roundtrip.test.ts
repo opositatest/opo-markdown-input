@@ -90,3 +90,22 @@ describe('editor schema wiring', () => {
     expect(sources).not.toContain(NUMBERED_LIST_AUTOFORMAT_SOURCE)
   })
 })
+
+describe('mixed documents', () => {
+  it('keeps a real list and literal numbered lines apart, and saves them the same way', () => {
+    const editor = createEditor()
+    // A list created on purpose, followed by apartados written by hand.
+    const markdown = '1. uno\n\n2. dos\n\n4\\. cuatro\n\n1\\. otro\n\ntexto final'
+
+    const blocks = markdownToEditorBlocks(editor, markdown)
+
+    expect(blocks.map((block) => block.type)).toEqual([
+      'numberedListItem',
+      'numberedListItem',
+      'paragraph',
+      'paragraph',
+      'paragraph',
+    ])
+    expect(editorBlocksToMarkdown(editor, blocks)).toBe(markdown)
+  })
+})
