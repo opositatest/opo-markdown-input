@@ -1,3 +1,4 @@
+import { escapeBlockMarkers } from '../markdown-block-escape'
 import type { TMarkdownBlock, TMarkdownEditor } from './editor-field.types'
 
 type TMarkdownSegment =
@@ -69,7 +70,10 @@ export function editorBlocksToMarkdown(
       continue
     }
 
-    markdownBatch.push(block)
+    // A paragraph whose text starts with a block marker (`3. `, `- `, `# `…)
+    // would be read back as that other block on the next load, so the marker is
+    // escaped (see `escapeBlockMarkers`).
+    markdownBatch.push(escapeBlockMarkers(block))
   }
 
   flushMarkdownBatch()

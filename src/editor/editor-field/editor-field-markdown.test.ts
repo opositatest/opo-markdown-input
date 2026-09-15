@@ -274,6 +274,35 @@ describe('editorBlocksToMarkdown', () => {
     expect(result).toBe('$$\nE = mc^2\n$$')
   })
 
+  it('escapes a leading block marker in a paragraph so the block keeps its type on reload', () => {
+    const editor = createMockEditor({
+      blocksToMarkdownLossy: vi.fn().mockReturnValue('3\\. No será preciso'),
+    })
+    const blocks = [
+      { type: 'paragraph', content: [{ type: 'text', text: '3. No será preciso', styles: {} }] },
+    ]
+
+    const result = editorBlocksToMarkdown(editor, blocks)
+
+    expect(editor.blocksToMarkdownLossy).toHaveBeenCalledWith([
+      { type: 'paragraph', content: [{ type: 'text', text: '3\\. No será preciso', styles: {} }] },
+    ])
+    expect(result).toBe('3\\. No será preciso')
+  })
+
+  it('does not escape blocks that have their own Markdown syntax', () => {
+    const editor = createMockEditor({
+      blocksToMarkdownLossy: vi.fn().mockReturnValue('1. apartado'),
+    })
+    const blocks = [
+      { type: 'numberedListItem', content: [{ type: 'text', text: 'apartado', styles: {} }] },
+    ]
+
+    editorBlocksToMarkdown(editor, blocks)
+
+    expect(editor.blocksToMarkdownLossy).toHaveBeenCalledWith(blocks)
+  })
+
   it('delegates any image block to editor.blocksToMarkdownLossy', () => {
     const editor = createMockEditor({
       blocksToMarkdownLossy: vi.fn().mockReturnValue('![A cat](https://example.com/cat.png)'),

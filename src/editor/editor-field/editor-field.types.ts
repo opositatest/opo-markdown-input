@@ -20,6 +20,17 @@ export type TMarkdownTextEditorProps = {
   onReady?: (handle: TMarkdownTextEditorHandle) => void
 }
 
+/**
+ * Minimal shape of the inline content the Markdown serializer has to look at
+ * (see `escapeBlockMarkers`). Extra fields are allowed on purpose: the editor
+ * owns the real inline content shape, this module only reads `type` and `text`.
+ */
+export type TMarkdownInlineNode = {
+  type?: string
+  text?: string
+  [key: string]: unknown
+}
+
 export type TMarkdownBlock = {
   type?: string
   props?: {
@@ -27,6 +38,7 @@ export type TMarkdownBlock = {
     url?: string
     name?: string
   }
+  content?: TMarkdownInlineNode[]
 }
 
 export type TMarkdownEditor = {
