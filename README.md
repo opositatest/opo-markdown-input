@@ -49,7 +49,28 @@ The only exceptions are BlockNote's own behaviours *inside* a block:
   indenting the table.
 
 Markdown that already contains nested lists (pasted content or a document saved before this rule) is still
-parsed and re-exported unchanged, but indentation can no longer be created from the keyboard.
+parsed and re-exported, but indentation can no longer be created from the keyboard, and a paragraph nested under
+a list item is currently flattened out of it when the document is saved again.
+
+### Numbered lists and literal numbers
+
+The editor never renumbers a number you wrote on purpose. BlockNote numbers list items by position, so typing
+`1. ` at the end of a paragraph still turns it into a numbered list, but **only when the number you typed is the
+one the list would display anyway**:
+
+- `1. ` in an empty paragraph, or `2. ` right after item 1 → becomes a numbered list item (unchanged behaviour).
+- `3. ` right after item 1 → stays literal text, so the number you wrote is the number that is saved. Legal texts
+  need this: apartados that are cited elsewhere by number (`1.`, `3.ª`, …) must not be renumbered.
+
+Markdown cannot express "1, 3": inside a list only the first item's number is kept, which is why writing the
+number as text is the only way to keep it.
+
+For the same reason, a paragraph whose text starts with a block marker is escaped when the document is saved
+(`3. No será preciso` is stored as `3\. No será preciso`). Without the escape, that paragraph would come back as
+a numbered list item, so the number would stop being text and start being renumbered. The escape renders
+exactly the same in any Markdown renderer.
+
+To create a numbered list on purpose, use the slash menu (`/lista numerada`) or the block type selector.
 
 ### Math / LaTeX blocks
 
