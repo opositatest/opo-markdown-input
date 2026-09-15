@@ -52,25 +52,37 @@ Markdown that already contains nested lists (pasted content or a document saved 
 parsed and re-exported, but indentation can no longer be created from the keyboard, and a paragraph nested under
 a list item is currently flattened out of it when the document is saved again.
 
-### Numbered lists and literal numbers
+### Numbered apartados and literal numbers
 
-The editor never renumbers a number you wrote on purpose. BlockNote numbers list items by position, so typing
-`1. ` at the end of a paragraph still turns it into a numbered list, but **only when the number you typed is the
-one the list would display anyway**:
+A number you type is **never** turned into an automatic list, so the number you wrote is the number that is
+saved. Typing `1. `, `2. `, `3.ª`… at the start of a line just writes that text, exactly like the BOE does, and
+apartados that are cited elsewhere by number are never renumbered:
 
-- `1. ` in an empty paragraph, or `2. ` right after item 1 → becomes a numbered list item (unchanged behaviour).
-- `3. ` right after item 1 → stays literal text, so the number you wrote is the number that is saved. Legal texts
-  need this: apartados that are cited elsewhere by number (`1.`, `3.ª`, …) must not be renumbered.
+- `1. No será preciso…` and `3. Tampoco será preciso…` stay two lines of text, aligned the same way, even when
+the second one skips a number.
+- Markdown cannot express "1, 3": inside a list only the first item's number is kept and the editor paints every
+  other number from the item's position, which is why an automatic list cannot hold a number you wrote.
 
-Markdown cannot express "1, 3": inside a list only the first item's number is kept, which is why writing the
-number as text is the only way to keep it.
+This is also why paragraph text that starts with a block marker is escaped when the document is saved
+(`3. No será preciso` is stored as `3\. No será preciso`). Without the escape, that line would come back as a
+numbered list item, so the number would stop being text and start being renumbered. The escape renders exactly
+the same in any Markdown renderer.
 
-For the same reason, a paragraph whose text starts with a block marker is escaped when the document is saved
-(`3. No será preciso` is stored as `3\. No será preciso`). Without the escape, that paragraph would come back as
-a numbered list item, so the number would stop being text and start being renumbered. The escape renders
-exactly the same in any Markdown renderer.
+To create an actual numbered list, use the slash menu (`/lista numerada`), the block type selector or
+`Ctrl/⌘+Shift+7`; it keeps its own positional numbering, and Markdown documents that already contain lists are
+loaded as lists.
 
-To create a numbered list on purpose, use the slash menu (`/lista numerada`) or the block type selector.
+### Pasting
+
+Pasted content is taken at face value: the `text/html` flavour when the source provides it, plain text otherwise.
+It is never *guessed* to be Markdown, because the plain text of a legal document is full of lines starting with
+`1. `, and parsing it as Markdown turned the apartados into an automatic list that then renumbered them (`1.`,
+`3.` came back as `1.`, `2.`).
+
+- `Ctrl/⌘+V` from a web page keeps the HTML structure — headings, bold, links — with the numbers as text.
+- `Ctrl/⌘+Shift+V` (paste without formatting) inserts the text literally, which is what the **Quitar formato**
+  button suggests when the source formatting is not wanted.
+- Explicit Markdown still works: `text/markdown` on the clipboard, and the editor's own `pasteMarkdown()`.
 
 ### Math / LaTeX blocks
 
