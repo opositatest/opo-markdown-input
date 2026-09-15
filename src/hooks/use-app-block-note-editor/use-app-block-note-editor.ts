@@ -3,6 +3,7 @@ import { useCreateBlockNote } from '@blocknote/react'
 
 import { editorSchema } from '../../editor/editor-schema'
 import { noTabIndentationExtension } from '../../editor/no-tab-indentation'
+import { literalTextPasteHandler } from '../../editor/paste-handler'
 
 type TUseAppBlockNoteEditorOptions = {
   placeholder?: string
@@ -25,6 +26,7 @@ export function useAppBlockNoteEditor(
     {
       schema: editorSchema,
       extensions: [noTabIndentationExtension],
+      pasteHandler: literalTextPasteHandler,
       uploadFile,
       dictionary: placeholder
         ? { ...es, placeholders: { ...es.placeholders, default: placeholder, emptyDocument: placeholder } }
