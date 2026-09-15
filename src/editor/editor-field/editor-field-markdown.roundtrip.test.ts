@@ -2,10 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { BlockNoteEditor } from '@blocknote/core'
 
 import { editorSchema } from '../editor-schema'
-import {
-  NUMBERED_LIST_AUTOFORMAT_SOURCE,
-  getUpcomingNumberedIndex,
-} from '../numbered-list-numbering'
+import { NUMBERED_LIST_AUTOFORMAT_SOURCE } from '../numbered-list-numbering'
 import { editorBlocksToMarkdown, markdownToEditorBlocks } from './editor-field-markdown'
 import type { TMarkdownBlock, TMarkdownEditor } from './editor-field.types'
 
@@ -80,55 +77,16 @@ describe('editorBlocksToMarkdown round trip', () => {
   })
 })
 
-describe('numbering against the real editor', () => {
-  function createNumberingEditor(): ReturnType<typeof BlockNoteEditor.create> {
-    const editor = BlockNoteEditor.create({ schema: editorSchema })
-    editor.replaceBlocks(editor.document, [{ type: 'numberedListItem', content: 'uno' }])
-    editor.insertBlocks([{ type: 'paragraph', content: 'texto' }], editor.document[0], 'after')
-    editor.setTextCursorPosition(editor.document[1], 'end')
-    return editor
-  }
-
-  it('resolves the number a new item would get after one existing item', () => {
-    const editor = createNumberingEditor()
-
-    expect(getUpcomingNumberedIndex(editor)).toBe(2)
-  })
-
-  it('resolves the number after a run that starts elsewhere', () => {
-    const editor = BlockNoteEditor.create({ schema: editorSchema })
-    editor.replaceBlocks(editor.document, [
-      { type: 'numberedListItem', props: { start: 3 }, content: 'tres' },
-      { type: 'numberedListItem', content: 'cuatro' },
-    ])
-    editor.insertBlocks([{ type: 'paragraph', content: 'texto' }], editor.document[1], 'after')
-    editor.setTextCursorPosition(editor.document[2], 'end')
-
-    expect(getUpcomingNumberedIndex(editor)).toBe(5)
-  })
-
-  it('resolves 1 when nothing precedes the block being typed', () => {
-    const editor = BlockNoteEditor.create({ schema: editorSchema })
-    editor.replaceBlocks(editor.document, [
-      { type: 'paragraph', content: 'primero' },
-      { type: 'paragraph', content: 'texto' },
-    ])
-    editor.setTextCursorPosition(editor.document[1], 'end')
-
-    expect(getUpcomingNumberedIndex(editor)).toBe(1)
-  })
-})
-
 describe('editor schema wiring', () => {
-  it('uses the number preserving autoformat rule for numbered lists', () => {
+  it('does not keep the autoformat that would number a typed apartado by position', () => {
     const spec = editorSchema.blockSpecs.numberedListItem
     const [extension] = spec.extensions ?? []
     const created = extension as (context: unknown) => {
       inputRules?: Array<{ find: RegExp }>
     }
 
-    expect(created({ editor: undefined }).inputRules?.[0]?.find.source).toBe(
-      NUMBERED_LIST_AUTOFORMAT_SOURCE,
-    )
+    const sources = created({ editor: undefined }).inputRules?.map((rule) => rule.find.source) ?? []
+
+    expect(sources).not.toContain(NUMBERED_LIST_AUTOFORMAT_SOURCE)
   })
 })
