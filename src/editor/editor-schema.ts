@@ -3,10 +3,16 @@ import { filterSuggestionItems, insertOrUpdateBlockForSlashMenu } from '@blockno
 import { type DefaultReactSuggestionItem } from '@blocknote/react'
 import { mathBlockSpec } from './math-block/math-block-spec'
 import { imageBlockSpec } from './image-block/image-block-spec'
+import { createNumberedListItemSpecWithoutAutoformat } from './numbered-list-numbering'
 
 export const editorSchema = BlockNoteSchema.create({
   blockSpecs: {
     ...defaultBlockSpecs,
+    // Same spec as upstream, minus its "1. " autoformat: a typed number stays
+    // text, because a numbered list item would display the number of its
+    // position instead of the one the author wrote (see
+    // `numbered-list-numbering.ts`).
+    numberedListItem: createNumberedListItemSpecWithoutAutoformat() as typeof defaultBlockSpecs.numberedListItem,
     math: mathBlockSpec(),
     image: imageBlockSpec(),
   },

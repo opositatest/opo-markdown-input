@@ -49,7 +49,40 @@ The only exceptions are BlockNote's own behaviours *inside* a block:
   indenting the table.
 
 Markdown that already contains nested lists (pasted content or a document saved before this rule) is still
-parsed and re-exported unchanged, but indentation can no longer be created from the keyboard.
+parsed and re-exported, but indentation can no longer be created from the keyboard, and a paragraph nested under
+a list item is currently flattened out of it when the document is saved again.
+
+### Numbered apartados and literal numbers
+
+A number you type is **never** turned into an automatic list, so the number you wrote is the number that is
+saved. Typing `1. `, `2. `, `3.ª`… at the start of a line just writes that text, exactly like the BOE does, and
+apartados that are cited elsewhere by number are never renumbered:
+
+- `1. No será preciso…` and `3. Tampoco será preciso…` stay two lines of text, aligned the same way, even when
+the second one skips a number.
+- Markdown cannot express "1, 3": inside a list only the first item's number is kept and the editor paints every
+  other number from the item's position, which is why an automatic list cannot hold a number you wrote.
+
+This is also why paragraph text that starts with a block marker is escaped when the document is saved
+(`3. No será preciso` is stored as `3\. No será preciso`). Without the escape, that line would come back as a
+numbered list item, so the number would stop being text and start being renumbered. The escape renders exactly
+the same in any Markdown renderer.
+
+To create an actual numbered list, use the slash menu (`/lista numerada`), the block type selector or
+`Ctrl/⌘+Shift+7`; it keeps its own positional numbering, and Markdown documents that already contain lists are
+loaded as lists.
+
+### Pasting
+
+Pasted content is taken at face value: the `text/html` flavour when the source provides it, plain text otherwise.
+It is never *guessed* to be Markdown, because the plain text of a legal document is full of lines starting with
+`1. `, and parsing it as Markdown turned the apartados into an automatic list that then renumbered them (`1.`,
+`3.` came back as `1.`, `2.`).
+
+- `Ctrl/⌘+V` from a web page keeps the HTML structure — headings, bold, links — with the numbers as text.
+- `Ctrl/⌘+Shift+V` (paste without formatting) inserts the text literally, which is what the **Quitar formato**
+  button suggests when the source formatting is not wanted.
+- Explicit Markdown still works: `text/markdown` on the clipboard, and the editor's own `pasteMarkdown()`.
 
 ### Math / LaTeX blocks
 
