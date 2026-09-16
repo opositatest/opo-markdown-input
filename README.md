@@ -34,13 +34,21 @@ The editor currently focuses on text-first rich content that serializes cleanly 
 - Inline styles: bold, italic, underline, strikethrough, and inline code
 - Display math blocks written in LaTeX
 
-Indented / nested blocks are **not** part of the supported surface: `Tab` never indents (see [Tab key](#tab-key)).
+Indented / nested blocks are **not** part of the supported surface: `Tab` never indents, and the formatting
+toolbar offers no *Anidar bloque* / *Desanidar bloque* action (see [Tab key](#tab-key)).
 
 ### Tab key
 
 `Tab` behaves like it does in any other form control: it moves focus to the next focusable element of the
 host page (`Shift-Tab` moves to the previous one), so it never indents a block or uses the browser's focus as a
 trap. `Escape` still blurs the editor.
+
+The nest/un-nest buttons BlockNote ships in the formatting toolbar are filtered out as well, so indentation
+cannot be added with a single click either (the hover tooltip advertising the `Tab` shortcut is gone with them).
+That filtering lives in `EXCLUDED_ITEM_KEYS` in `src/components/app-block-note-view/app-formatting-toolbar.tsx`
+and is pinned by `app-formatting-toolbar.test.tsx`: it matches on the upstream item `key`
+(`nestBlockButton` / `unnestBlockButton`), so an upstream rename would silently bring the buttons back rather
+than fail loudly.
 
 The only exceptions are BlockNote's own behaviours *inside* a block:
 
@@ -153,6 +161,8 @@ Load via CDN (no build step required):
 Selecting text opens the formatting toolbar. Its **Quitar formato** action converts selected
 text blocks to paragraphs and removes inline styles, colors, code formatting, and links in one
 undoable operation. Non-text blocks such as images, tables, and formulas are left unchanged.
+
+The toolbar never offers nesting/un-nesting (see [Tab key](#tab-key)); text alignment is still available.
 
 The action tooltip also shows the browser shortcut for pasting without source formatting:
 `Ctrl/⌘ + Shift + V`.
