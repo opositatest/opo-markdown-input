@@ -34,31 +34,37 @@ The editor currently focuses on text-first rich content that serializes cleanly 
 - Inline styles: bold, italic, underline, strikethrough, and inline code
 - Display math blocks written in LaTeX
 
-Indented / nested blocks are **not** part of the supported surface: `Tab` never indents, and the formatting
-toolbar offers no *Anidar bloque* / *Desanidar bloque* action (see [Tab key](#tab-key)).
+Indented / nested blocks are **not** part of the supported surface, with one exception: a list item nested under
+another list item is a nested list in Markdown, so `Tab` creates it (see [Tab key](#tab-key)). The formatting
+toolbar still offers no *Anidar bloque* / *Desanidar bloque* action.
 
 ### Tab key
 
 `Tab` behaves like it does in any other form control: it moves focus to the next focusable element of the
-host page (`Shift-Tab` moves to the previous one), so it never indents a block or uses the browser's focus as a
-trap. `Escape` still blurs the editor.
+host page (`Shift-Tab` moves to the previous one), so a paragraph, a heading or a quote never indents, and the
+editor never uses the browser's focus as a trap. `Escape` still blurs the editor.
 
-The nest/un-nest buttons BlockNote ships in the formatting toolbar are filtered out as well, so indentation
-cannot be added with a single click either (the hover tooltip advertising the `Tab` shortcut is gone with them).
-That filtering lives in `EXCLUDED_ITEM_KEYS` in `src/components/app-block-note-view/app-formatting-toolbar.tsx`
-and is pinned by `app-formatting-toolbar.test.tsx`: it matches on the upstream item `key`
-(`nestBlockButton` / `unnestBlockButton`), so an upstream rename would silently bring the buttons back rather
-than fail loudly.
+The exceptions are BlockNote's own behaviours *inside* a block:
 
-The only exceptions are BlockNote's own behaviours *inside* a block:
-
+- **Lists** (bullet, numbered, checklist, toggle): `Tab` on the second and later items nests the item under the
+  previous one, and `Shift-Tab` lifts a nested item back out. A nested list is the one kind of indentation
+  Markdown can express, so it round-trips as `* parent` / `  * child`. The **first** item of a list cannot nest
+  (there is nothing above it to nest into), so `Tab` there leaves the editor - there is always a way out of the
+  field with the keyboard.
 - **Code blocks**: `Tab` inserts two spaces. `Shift-Tab` leaves the editor.
 - **Tables**: `Tab` / `Shift-Tab` move between cells. At the first/last cell they leave the editor instead of
   indenting the table.
 
-Markdown that already contains nested lists (pasted content or a document saved before this rule) is still
-parsed and re-exported, but indentation can no longer be created from the keyboard, and a paragraph nested under
-a list item is currently flattened out of it when the document is saved again.
+The nest/un-nest buttons BlockNote ships in the formatting toolbar are filtered out (`EXCLUDED_ITEM_KEYS` in
+`src/components/app-block-note-view/app-formatting-toolbar.tsx`, pinned by `app-formatting-toolbar.test.tsx`):
+they indent whatever block is selected - a paragraph, a list under a paragraph, a paragraph under a list item -
+and Markdown reads all of those lines back as *siblings*, so the nesting the user saw would disappear on the
+next save. Only `Tab` inside a list nests, and only when the result is still a list. That filter matches on the
+upstream item `key` (`nestBlockButton` / `unnestBlockButton`), so an upstream rename would silently bring the
+buttons back rather than fail loudly.
+
+Markdown that already contains nested lists is parsed and re-exported unchanged, and a paragraph nested under a
+list item is currently flattened out of it when the document is saved again.
 
 ### Numbered apartados and literal numbers
 
