@@ -14,6 +14,10 @@
     },
     "./style": "./dist/editor.css"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opositatest/opo-markdown-input.git"
+  },
   "publishConfig": {
     "access": "public"
   },
