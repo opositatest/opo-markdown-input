@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: read
+  packages: write # publish to GitHub Packages with GITHUB_TOKEN
   id-token: write # npm trusted publishing (OIDC)
 
 concurrency:
