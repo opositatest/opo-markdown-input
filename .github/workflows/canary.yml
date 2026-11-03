@@ -3,6 +3,10 @@ name: 🐤 Canary Release
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write # npm trusted publishing (OIDC)
+
 concurrency:
   group: canary-${{ github.ref }}
   cancel-in-progress: true
@@ -35,10 +39,13 @@ jobs:
       - name: 🔨 Build package
         run: npm run build:package
 
+      - name: ⬆️ Ensure npm supports trusted publishing
+        # Trusted publishing (OIDC) requires npm >= 11.5.1
+        run: npm install -g npm@^11.5.1
+
       - name: 📦 Publish to npm (canary)
-        run: npm publish --tag canary --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # Authenticates through OIDC (trusted publisher configured on npmjs for canary.yml): no token needed.
+        run: npm publish --tag canary --access public --provenance
 
       - name: 🟢 Setup Node.js for GitHub Packages
         uses: actions/setup-node@v4
